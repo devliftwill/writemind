@@ -1,3 +1,5 @@
+import '../auth/auth_util.dart';
+import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
@@ -20,6 +22,7 @@ class ChatWidget extends StatefulWidget {
 
 class _ChatWidgetState extends State<ChatWidget> {
   TextEditingController? emailTextFieldController;
+  final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -98,63 +101,104 @@ class _ChatWidgetState extends State<ChatWidget> {
               flex: 6,
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  reverse: true,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(0),
-                              bottomRight: Radius.circular(10),
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),
-                            ),
-                          ),
-                          child: Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-                            child: Text(
-                              'Hello World',
-                              style: FlutterFlowTheme.of(context).bodyText1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
+                child: StreamBuilder<List<MessagesRecord>>(
+                  stream: queryMessagesRecord(
+                    parent: widget.storyRef,
+                    queryBuilder: (messagesRecord) =>
+                        messagesRecord.orderBy('created_date'),
+                  ),
+                  builder: (context, snapshot) {
+                    // Customize what your widget looks like when it's loading.
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: CircularProgressIndicator(
                             color: FlutterFlowTheme.of(context).primaryColor,
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(0),
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),
-                            ),
-                          ),
-                          child: Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-                            child: Text(
-                              'Hello World',
-                              style: FlutterFlowTheme.of(context).bodyText1,
-                            ),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+                      );
+                    }
+                    List<MessagesRecord> listViewMessagesRecordList =
+                        snapshot.data!;
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      reverse: true,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: listViewMessagesRecordList.length,
+                      itemBuilder: (context, listViewIndex) {
+                        final listViewMessagesRecord =
+                            listViewMessagesRecordList[listViewIndex];
+                        return Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            if (listViewMessagesRecord.senderRef == null)
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0, 10, 0, 10),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryColor,
+                                        borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(0),
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            10, 10, 10, 10),
+                                        child: Text(
+                                          listViewMessagesRecord.text!,
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyText1,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            if (listViewMessagesRecord.senderRef ==
+                                currentUserReference)
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(0),
+                                        bottomRight: Radius.circular(10),
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          10, 10, 10, 10),
+                                      child: Text(
+                                        listViewMessagesRecord.text!,
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyText1,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ),
@@ -164,52 +208,124 @@ class _ChatWidgetState extends State<ChatWidget> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: emailTextFieldController,
-                      textCapitalization: TextCapitalization.sentences,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: 'Message..',
-                        hintStyle: FlutterFlowTheme.of(context).bodyText2,
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
+                    child: Form(
+                      key: formKey,
+                      autovalidateMode: AutovalidateMode.disabled,
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color:
+                              FlutterFlowTheme.of(context).secondaryBackground,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        errorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        focusedErrorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        filled: true,
-                        fillColor:
-                            FlutterFlowTheme.of(context).secondaryBackground,
-                        suffixIcon: Icon(
-                          Icons.send,
-                          color: Color(0xFF757575),
-                          size: 22,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                FlutterFlowIconButton(
+                                  borderColor: Colors.transparent,
+                                  borderRadius: 30,
+                                  borderWidth: 1,
+                                  buttonSize: 40,
+                                  icon: Icon(
+                                    Icons.image_outlined,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    size: 20,
+                                  ),
+                                  onPressed: () {
+                                    print('IconButton pressed ...');
+                                  },
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: emailTextFieldController,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      hintText: 'Message..',
+                                      hintStyle: FlutterFlowTheme.of(context)
+                                          .bodyText2,
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      errorBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      focusedErrorBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      filled: true,
+                                      fillColor: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                    ),
+                                    style:
+                                        FlutterFlowTheme.of(context).bodyText1,
+                                    keyboardType: TextInputType.name,
+                                    validator: (val) {
+                                      if (val == null || val.isEmpty) {
+                                        return 'Field is required';
+                                      }
+
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                FlutterFlowIconButton(
+                                  borderColor: Colors.transparent,
+                                  borderRadius: 30,
+                                  borderWidth: 1,
+                                  buttonSize: 40,
+                                  icon: Icon(
+                                    Icons.send,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    size: 20,
+                                  ),
+                                  onPressed: () async {
+                                    if (formKey.currentState == null ||
+                                        !formKey.currentState!.validate()) {
+                                      return;
+                                    }
+
+                                    final messagesCreateData =
+                                        createMessagesRecordData(
+                                      text: emailTextFieldController!.text,
+                                      createdDate: getCurrentTimestamp,
+                                      senderRef: currentUserReference,
+                                    );
+                                    await MessagesRecord.createDoc(
+                                            widget.storyRef!)
+                                        .set(messagesCreateData);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      style: FlutterFlowTheme.of(context).bodyText1,
-                      keyboardType: TextInputType.name,
                     ),
                   ),
                 ],

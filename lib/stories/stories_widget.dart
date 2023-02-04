@@ -1,5 +1,6 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../components/empty_widget.dart';
 import '../components/story_widget.dart';
 import '../flutter_flow/flutter_flow_animations.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
@@ -172,8 +173,8 @@ class _StoriesWidgetState extends State<StoriesWidget>
                 Expanded(
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                    child: FutureBuilder<List<StoriesRecord>>(
-                      future: queryStoriesRecordOnce(
+                    child: StreamBuilder<List<StoriesRecord>>(
+                      stream: queryStoriesRecord(
                         queryBuilder: (storiesRecord) => storiesRecord
                             .where('user_ref', isEqualTo: currentUserReference)
                             .orderBy('created_date'),
@@ -194,6 +195,9 @@ class _StoriesWidgetState extends State<StoriesWidget>
                         }
                         List<StoriesRecord> listViewStoriesRecordList =
                             snapshot.data!;
+                        if (listViewStoriesRecordList.isEmpty) {
+                          return EmptyWidget();
+                        }
                         return ListView.builder(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
@@ -219,9 +223,7 @@ class _StoriesWidgetState extends State<StoriesWidget>
                                 },
                                 child: StoryWidget(
                                   key: Key('Story_${listViewIndex}'),
-                                  title: listViewStoriesRecord.title,
-                                  image: 'zdf',
-                                  date: listViewStoriesRecord.createdDate,
+                                  story: listViewStoriesRecord,
                                 ),
                               ).animateOnPageLoad(
                                   animationsMap['storyOnPageLoadAnimation']!),

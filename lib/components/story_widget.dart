@@ -1,3 +1,5 @@
+import '../backend/backend.dart';
+import '../components/story_actions_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +8,10 @@ import 'package:google_fonts/google_fonts.dart';
 class StoryWidget extends StatefulWidget {
   const StoryWidget({
     Key? key,
-    this.title,
-    this.date,
-    this.image,
+    this.story,
   }) : super(key: key);
 
-  final String? title;
-  final DateTime? date;
-  final String? image;
+  final StoriesRecord? story;
 
   @override
   _StoryWidgetState createState() => _StoryWidgetState();
@@ -78,13 +76,31 @@ class _StoryWidgetState extends State<StoryWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Sory title',
+                      widget.story!.title!,
                       style: FlutterFlowTheme.of(context).subtitle1,
                     ),
-                    Icon(
-                      Icons.more_vert,
-                      color: FlutterFlowTheme.of(context).secondaryColor,
-                      size: 24,
+                    InkWell(
+                      onTap: () async {
+                        await showModalBottomSheet(
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          enableDrag: false,
+                          context: context,
+                          builder: (context) {
+                            return Padding(
+                              padding: MediaQuery.of(context).viewInsets,
+                              child: StoryActionsWidget(
+                                storyDoc: widget.story,
+                              ),
+                            );
+                          },
+                        ).then((value) => setState(() {}));
+                      },
+                      child: Icon(
+                        Icons.more_vert,
+                        color: FlutterFlowTheme.of(context).secondaryColor,
+                        size: 24,
+                      ),
                     ),
                   ],
                 ),
@@ -96,7 +112,7 @@ class _StoryWidgetState extends State<StoryWidget> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      '05/25',
+                      dateTimeFormat('relative', widget.story!.createdDate!),
                       style: FlutterFlowTheme.of(context).bodyText1.override(
                             fontFamily: 'Poppins',
                             color: Colors.white,
