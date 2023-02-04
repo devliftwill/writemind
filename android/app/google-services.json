@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "487162505750",
+    "project_id": "writemind-cd567",
+    "storage_bucket": "writemind-cd567.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487162505750:android:0ed2720bfab79d923f6337",
+        "android_client_info": {
+          "package_name": "com.devlift.writemind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "487162505750-19fpvd3vshcilvq68aova4ddj2cncdlg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devlift.writemind",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "487162505750-8kqai78tq6h1t9s697h55lan3vq1248s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOY2ilIJ4Rk-kBXVBZcEJS7umzYa8LdPo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "487162505750-8kqai78tq6h1t9s697h55lan3vq1248s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "487162505750-hi9fgdj0nmpsvsusu315uu3u2fei8ujr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.devlift.writemind"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
