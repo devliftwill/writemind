@@ -104,8 +104,8 @@ class _ChatWidgetState extends State<ChatWidget> {
                 child: StreamBuilder<List<MessagesRecord>>(
                   stream: queryMessagesRecord(
                     parent: widget.storyRef,
-                    queryBuilder: (messagesRecord) =>
-                        messagesRecord.orderBy('created_date'),
+                    queryBuilder: (messagesRecord) => messagesRecord
+                        .orderBy('created_date', descending: true),
                   ),
                   builder: (context, snapshot) {
                     // Customize what your widget looks like when it's loading.
@@ -143,6 +143,11 @@ class _ChatWidgetState extends State<ChatWidget> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.85,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: FlutterFlowTheme.of(context)
                                             .primaryColor,
@@ -168,31 +173,40 @@ class _ChatWidgetState extends State<ChatWidget> {
                               ),
                             if (listViewMessagesRecord.senderRef ==
                                 currentUserReference)
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(0),
-                                        bottomRight: Radius.circular(10),
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0, 10, 0, 10),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.85,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                        borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(0),
+                                          bottomRight: Radius.circular(10),
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            10, 10, 10, 10),
+                                        child: Text(
+                                          listViewMessagesRecord.text!,
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyText1,
+                                        ),
                                       ),
                                     ),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          10, 10, 10, 10),
-                                      child: Text(
-                                        listViewMessagesRecord.text!,
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyText1,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                           ],
                         );
@@ -220,25 +234,11 @@ class _ChatWidgetState extends State<ChatWidget> {
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                FlutterFlowIconButton(
-                                  borderColor: Colors.transparent,
-                                  borderRadius: 30,
-                                  borderWidth: 1,
-                                  buttonSize: 40,
-                                  icon: Icon(
-                                    Icons.image_outlined,
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryText,
-                                    size: 20,
-                                  ),
-                                  onPressed: () {
-                                    print('IconButton pressed ...');
-                                  },
-                                ),
                                 Expanded(
                                   child: TextFormField(
                                     controller: emailTextFieldController,
@@ -283,6 +283,8 @@ class _ChatWidgetState extends State<ChatWidget> {
                                     ),
                                     style:
                                         FlutterFlowTheme.of(context).bodyText1,
+                                    maxLines: 4,
+                                    minLines: 1,
                                     keyboardType: TextInputType.name,
                                     validator: (val) {
                                       if (val == null || val.isEmpty) {

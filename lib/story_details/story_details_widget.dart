@@ -1,7 +1,11 @@
+import '../backend/backend.dart';
 import '../components/chat_widget.dart';
+import '../components/empty_widget.dart';
+import '../components/image_editor_widget.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
+import '../flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -231,6 +235,7 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
+                      flex: 2,
                       child: TextFormField(
                         controller: textController,
                         obscureText: false,
@@ -281,6 +286,47 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget> {
                         style: FlutterFlowTheme.of(context).bodyText1,
                       ),
                     ),
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 20, 5, 20),
+                        child: FFButtonWidget(
+                          onPressed: () async {
+                            await showModalBottomSheet(
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              enableDrag: false,
+                              context: context,
+                              builder: (context) {
+                                return Padding(
+                                  padding: MediaQuery.of(context).viewInsets,
+                                  child: ImageEditorWidget(
+                                    storyRef: widget.storyRef,
+                                  ),
+                                );
+                              },
+                            ).then((value) => setState(() {}));
+                          },
+                          text: 'Add',
+                          icon: Icon(
+                            Icons.image_outlined,
+                            size: 20,
+                          ),
+                          options: FFButtonOptions(
+                            height: 40,
+                            color:
+                                FlutterFlowTheme.of(context).primaryBackground,
+                            textStyle: FlutterFlowTheme.of(context).bodyText2,
+                            borderSide: BorderSide(
+                              color:
+                                  FlutterFlowTheme.of(context).secondaryColor,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -307,6 +353,80 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget> {
                             )
                           ],
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding:
+                              EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
+                          child: StreamBuilder<List<ImagesRecord>>(
+                            stream: queryImagesRecord(
+                              parent: widget.storyRef,
+                            ),
+                            builder: (context, snapshot) {
+                              // Customize what your widget looks like when it's loading.
+                              if (!snapshot.hasData) {
+                                return Center(
+                                  child: SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: CircularProgressIndicator(
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryColor,
+                                    ),
+                                  ),
+                                );
+                              }
+                              List<ImagesRecord> gridViewImagesRecordList =
+                                  snapshot.data!;
+                              if (gridViewImagesRecordList.isEmpty) {
+                                return EmptyWidget(
+                                  icon: Icon(
+                                    Icons.image_not_supported,
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryColor,
+                                    size: 50,
+                                  ),
+                                  header:
+                                      'Locks like you don\'t have any images yet.',
+                                  body:
+                                      'Lorem ipsum dolor sit amet, consetetur  sadipscing elitr, sed diam nonumy eirmod.',
+                                );
+                              }
+                              return GridView.builder(
+                                padding: EdgeInsets.zero,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                  childAspectRatio: 1,
+                                ),
+                                scrollDirection: Axis.vertical,
+                                itemCount: gridViewImagesRecordList.length,
+                                itemBuilder: (context, gridViewIndex) {
+                                  final gridViewImagesRecord =
+                                      gridViewImagesRecordList[gridViewIndex];
+                                  return Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          5, 5, 5, 5),
+                                      child: Image.network(
+                                        'https://picsum.photos/seed/49/600',
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),

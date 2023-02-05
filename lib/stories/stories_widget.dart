@@ -196,7 +196,16 @@ class _StoriesWidgetState extends State<StoriesWidget>
                         List<StoriesRecord> listViewStoriesRecordList =
                             snapshot.data!;
                         if (listViewStoriesRecordList.isEmpty) {
-                          return EmptyWidget();
+                          return EmptyWidget(
+                            icon: Icon(
+                              Icons.menu_book,
+                              size: 50,
+                            ),
+                            header:
+                                'Looks like you don\'t have any stories yet.',
+                            body:
+                                'Lorem ipsum dolor sit amet, consetetur  sadipscing elitr, sed diam nonumy eirmod.',
+                          );
                         }
                         return ListView.builder(
                           padding: EdgeInsets.zero,
