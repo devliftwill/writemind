@@ -1,6 +1,5 @@
 import * as functions from "firebase-functions";
 import {createImage} from "../../utils/openai";
-import * as admin from "firebase-admin";
 
 export const imageOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 540}).firestore
     .document("stories/{storyId}/images/{docId}")
@@ -15,16 +14,16 @@ export const imageOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
             const response = await createImage(imagedoc.text, context.params.storyId);
 
             const image = response.data.data[0].url;
-            snapshot.ref.update({"image_url": image});
+            return snapshot.ref.update({"image_url": image});
 
             // add a message
 
-            const db = admin.firestore();
-            const messageDoc = {
-              "text": imagedoc.text,
-              "created_date": new Date(),
-            };
-            return db.collection("stories").doc(context.params.storyId).collection("messages").add(messageDoc);
+            // const db = admin.firestore();
+            // const messageDoc = {
+            //   "text": imagedoc.text,
+            //   "created_date": new Date(),
+            // };
+            // return db.collection("stories").doc(context.params.storyId).collection("messages").add(messageDoc);
           }
           return Promise.resolve();
         }

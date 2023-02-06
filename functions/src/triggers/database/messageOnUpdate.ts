@@ -3,7 +3,6 @@ import * as admin from "firebase-admin";
 import fs from "fs";
 import util from "util";
 import textToSpeech from "@google-cloud/text-to-speech"; // Imports the Google Cloud client library
-import {Storage} from "@google-cloud/storage";
 
 export const messageOnUpdate = functions.runWith({memory: "8GB", timeoutSeconds: 540}).firestore
     .document("stories/{storyId}/messages/{docId}")
@@ -17,9 +16,11 @@ export const messageOnUpdate = functions.runWith({memory: "8GB", timeoutSeconds:
           if (message && message.convert_to_audio) {
             const client = new textToSpeech.TextToSpeechClient();
 
-            const storage = new Storage();
-            const bucket = storage.bucket("myProject-cd99d.appspot.com");
             const destinationPath = `audio/${context.params.storyId}/` + outputFile;
+
+            const storagePath = "gs://writemind-cd567.appspot.com";
+            const storageRef = admin.storage().bucket(storagePath);
+            const file = storageRef.file(destinationPath);
 
 
             const request = {
@@ -27,22 +28,43 @@ export const messageOnUpdate = functions.runWith({memory: "8GB", timeoutSeconds:
               voice: {languageCode: "en-US", ssmlGender: "FEMALE"},
               audioConfig: {audioEncoding: "MP3"},
             };
+            const tempPath = `/tmp/${outputFile}`;
             const [response]: any = await client.synthesizeSpeech(request as any);
             const writeFile = util.promisify(fs.writeFile);
-            await writeFile(outputFile, response.audioContent, "binary");
-            console.log(`Audio content written to file: ${outputFile}`);
+            await writeFile(tempPath, response.audioContent, "binary");
 
-            const file = await bucket.upload(response.audioContent, {
-              destination: destinationPath,
+
+            // TODO: rewrite this mess
+            fs.open(tempPath, "r", function(err, fileToRead) {
+              if (!err) {
+                fs.readFile(fileToRead, async function(err, data) {
+                  if (!err) {
+                    await file.save(data).then((stuff) => {
+                      return file.getSignedUrl({
+                        action: "read",
+                        expires: "03-09-2500",
+                      });
+                    })
+                        .then((urls) => {
+                          const url = urls[0];
+                          console.log(`Media url = ${url}`);
+                          const db = admin.firestore();
+                          const storyDoc = {
+                            "audio": url,
+                          };
+                          return db.collection("stories").doc(context.params.storyId).update(storyDoc);
+                        })
+                        .catch((err) => {
+                          console.log(`Unable to upload media ${err}`);
+                        });
+                  } else {
+                    console.log(err);
+                  }
+                });
+              } else {
+                console.log(err);
+              }
             });
-            console.log("file", JSON.stringify(file));
-
-
-            const db = admin.firestore();
-            const storyDoc = {
-              "audio": "test",
-            };
-            return db.collection("stories").doc(context.params.storyId).update(storyDoc);
           }
 
           return Promise.resolve();
