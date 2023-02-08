@@ -42,6 +42,20 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(DateTime)));
     }
+    value = object.cover;
+    if (value != null) {
+      result
+        ..add('cover')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.audio;
+    if (value != null) {
+      result
+        ..add('audio')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
     value = object.ffRef;
     if (value != null) {
       result
@@ -79,6 +93,14 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
           result.createdDate = serializers.deserialize(value,
               specifiedType: const FullType(DateTime)) as DateTime?;
           break;
+        case 'cover':
+          result.cover = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'audio':
+          result.audio = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
               specifiedType: const FullType(DocumentReference, const [
@@ -100,12 +122,22 @@ class _$StoriesRecord extends StoriesRecord {
   @override
   final DateTime? createdDate;
   @override
+  final String? cover;
+  @override
+  final String? audio;
+  @override
   final DocumentReference<Object?>? ffRef;
 
   factory _$StoriesRecord([void Function(StoriesRecordBuilder)? updates]) =>
       (new StoriesRecordBuilder()..update(updates))._build();
 
-  _$StoriesRecord._({this.userRef, this.title, this.createdDate, this.ffRef})
+  _$StoriesRecord._(
+      {this.userRef,
+      this.title,
+      this.createdDate,
+      this.cover,
+      this.audio,
+      this.ffRef})
       : super._();
 
   @override
@@ -122,14 +154,20 @@ class _$StoriesRecord extends StoriesRecord {
         userRef == other.userRef &&
         title == other.title &&
         createdDate == other.createdDate &&
+        cover == other.cover &&
+        audio == other.audio &&
         ffRef == other.ffRef;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, userRef.hashCode), title.hashCode),
-            createdDate.hashCode),
+        $jc(
+            $jc(
+                $jc($jc($jc(0, userRef.hashCode), title.hashCode),
+                    createdDate.hashCode),
+                cover.hashCode),
+            audio.hashCode),
         ffRef.hashCode));
   }
 
@@ -139,6 +177,8 @@ class _$StoriesRecord extends StoriesRecord {
           ..add('userRef', userRef)
           ..add('title', title)
           ..add('createdDate', createdDate)
+          ..add('cover', cover)
+          ..add('audio', audio)
           ..add('ffRef', ffRef))
         .toString();
   }
@@ -160,6 +200,14 @@ class StoriesRecordBuilder
   DateTime? get createdDate => _$this._createdDate;
   set createdDate(DateTime? createdDate) => _$this._createdDate = createdDate;
 
+  String? _cover;
+  String? get cover => _$this._cover;
+  set cover(String? cover) => _$this._cover = cover;
+
+  String? _audio;
+  String? get audio => _$this._audio;
+  set audio(String? audio) => _$this._audio = audio;
+
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
   set ffRef(DocumentReference<Object?>? ffRef) => _$this._ffRef = ffRef;
@@ -174,6 +222,8 @@ class StoriesRecordBuilder
       _userRef = $v.userRef;
       _title = $v.title;
       _createdDate = $v.createdDate;
+      _cover = $v.cover;
+      _audio = $v.audio;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -200,6 +250,8 @@ class StoriesRecordBuilder
             userRef: userRef,
             title: title,
             createdDate: createdDate,
+            cover: cover,
+            audio: audio,
             ffRef: ffRef);
     replace(_$result);
     return _$result;

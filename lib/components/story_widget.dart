@@ -4,6 +4,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class StoryWidget extends StatefulWidget {
   const StoryWidget({
@@ -20,14 +21,19 @@ class StoryWidget extends StatefulWidget {
 class _StoryWidgetState extends State<StoryWidget> {
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Container(
       width: double.infinity,
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: Image.asset(
-            'assets/images/lucidly_cash_money_3d_cartoon_b49e92bc-1696-4c9b-b6d0-0afb2d8e5d69.png',
+          image: Image.network(
+            valueOrDefault<String>(
+              widget.story!.cover,
+              'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/writemind-en8c1n/assets/3rhb3i0igf0s/103891-simple-lazy-load.gif',
+            ),
           ).image,
         ),
         boxShadow: [

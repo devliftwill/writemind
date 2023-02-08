@@ -95,9 +95,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             FFRoute(
               name: 'StoryDetails',
               path: 'storyDetails',
+              asyncParams: {
+                'storyDoc': getDoc(['stories'], StoriesRecord.serializer),
+              },
               builder: (context, params) => StoryDetailsWidget(
-                storyRef: params.getParam('storyRef',
-                    ParamType.DocumentReference, false, ['stories']),
+                storyDoc: params.getParam('storyDoc', ParamType.Document),
               ),
             ),
             FFRoute(

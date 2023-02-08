@@ -1,32 +1,33 @@
+import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
-class StoryActionsWidget extends StatefulWidget {
-  const StoryActionsWidget({
+class MessageActionsWidget extends StatefulWidget {
+  const MessageActionsWidget({
     Key? key,
-    this.storyDoc,
+    this.messageDoc,
   }) : super(key: key);
 
-  final StoriesRecord? storyDoc;
+  final MessagesRecord? messageDoc;
 
   @override
-  _StoryActionsWidgetState createState() => _StoryActionsWidgetState();
+  _MessageActionsWidgetState createState() => _MessageActionsWidgetState();
 }
 
-class _StoryActionsWidgetState extends State<StoryActionsWidget> {
+class _MessageActionsWidgetState extends State<MessageActionsWidget> {
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
 
     return Container(
       width: double.infinity,
-      height: 210,
+      height: 170,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).primaryBackground,
         borderRadius: BorderRadius.only(
@@ -41,64 +42,31 @@ class _StoryActionsWidgetState extends State<StoryActionsWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            FFButtonWidget(
-              onPressed: () async {
-                context.pushNamed(
-                  'StoryDetails',
-                  queryParams: {
-                    'storyDoc': serializeParam(
-                      widget.storyDoc,
-                      ParamType.Document,
-                    ),
-                  }.withoutNulls,
-                  extra: <String, dynamic>{
-                    'storyDoc': widget.storyDoc,
-                  },
-                );
-              },
-              text: 'Edit',
-              options: FFButtonOptions(
-                width: double.infinity,
-                height: 50,
-                color: FlutterFlowTheme.of(context).secondaryBackground,
-                textStyle: FlutterFlowTheme.of(context).subtitle2.override(
-                      fontFamily: 'Poppins',
-                      color: Colors.white,
-                      fontWeight: FontWeight.normal,
-                    ),
-                borderSide: BorderSide(
-                  color: Colors.transparent,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            Builder(
-              builder: (context) => Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                child: FFButtonWidget(
-                  onPressed: () async {
-                    await Share.share(
-                      widget.storyDoc!.title!,
-                      sharePositionOrigin: getWidgetBoundingBox(context),
-                    );
-                  },
-                  text: 'Share',
-                  options: FFButtonOptions(
-                    width: double.infinity,
-                    height: 50,
-                    color: FlutterFlowTheme.of(context).secondaryBackground,
-                    textStyle: FlutterFlowTheme.of(context).subtitle2.override(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal,
-                        ),
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+              child: FFButtonWidget(
+                onPressed: () async {
+                  final messagesUpdateData = createMessagesRecordData(
+                    convertToAudio: true,
+                  );
+                  await widget.messageDoc!.reference.update(messagesUpdateData);
+                  Navigator.pop(context);
+                },
+                text: 'Use as story',
+                options: FFButtonOptions(
+                  width: double.infinity,
+                  height: 50,
+                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                  textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                        fontFamily: 'Poppins',
+                        color: Colors.white,
+                        fontWeight: FontWeight.normal,
+                      ),
+                  borderSide: BorderSide(
+                    color: Colors.transparent,
+                    width: 1,
                   ),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
@@ -111,8 +79,8 @@ class _StoryActionsWidgetState extends State<StoryActionsWidget> {
                         builder: (alertDialogContext) {
                           return AlertDialog(
                             title: Text('Are you sure?'),
-                            content:
-                                Text('This story will be perminantly removed'),
+                            content: Text(
+                                'This message will be perminantly removed'),
                             actions: [
                               TextButton(
                                 onPressed: () =>
@@ -130,7 +98,7 @@ class _StoryActionsWidgetState extends State<StoryActionsWidget> {
                       ) ??
                       false;
                   if (confirmDialogResponse) {
-                    await widget.storyDoc!.reference.delete();
+                    await widget.messageDoc!.reference.delete();
                   }
                   Navigator.pop(context);
                 },

@@ -1,11 +1,14 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../backend/firebase_storage/storage.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import '../flutter_flow/upload_media.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ImageEditorWidget extends StatefulWidget {
   const ImageEditorWidget({
@@ -20,6 +23,9 @@ class ImageEditorWidget extends StatefulWidget {
 }
 
 class _ImageEditorWidgetState extends State<ImageEditorWidget> {
+  bool isMediaUploading = false;
+  String uploadedFileUrl = '';
+
   TextEditingController? textController;
   final formKey = GlobalKey<FormState>();
 
@@ -37,9 +43,11 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Container(
       width: double.infinity,
-      height: 210,
+      height: 260,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).primaryBackground,
         borderRadius: BorderRadius.only(
@@ -115,20 +123,97 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                 child: FFButtonWidget(
                   onPressed: () async {
-                    final imagesCreateData = {
-                      ...createImagesRecordData(
-                        text: textController!.text,
-                      ),
-                      'created_date': FieldValue.serverTimestamp(),
-                    };
-                    await ImagesRecord.createDoc(widget.storyRef!)
-                        .set(imagesCreateData);
+                    final selectedMedia =
+                        await selectMediaWithSourceBottomSheet(
+                      context: context,
+                      maxWidth: 300.00,
+                      maxHeight: 300.00,
+                      allowPhoto: true,
+                    );
+                    if (selectedMedia != null &&
+                        selectedMedia.every((m) =>
+                            validateFileFormat(m.storagePath, context))) {
+                      setState(() => isMediaUploading = true);
+                      var downloadUrls = <String>[];
+                      try {
+                        downloadUrls = (await Future.wait(
+                          selectedMedia.map(
+                            (m) async =>
+                                await uploadData(m.storagePath, m.bytes),
+                          ),
+                        ))
+                            .where((u) => u != null)
+                            .map((u) => u!)
+                            .toList();
+                      } finally {
+                        isMediaUploading = false;
+                      }
+                      if (downloadUrls.length == selectedMedia.length) {
+                        setState(() => uploadedFileUrl = downloadUrls.first);
+                      } else {
+                        setState(() {});
+                        return;
+                      }
+                    }
                   },
-                  text: 'Generate',
+                  text: 'Add a base image',
+                  icon: Icon(
+                    Icons.image_outlined,
+                    size: 15,
+                  ),
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 50,
                     color: FlutterFlowTheme.of(context).secondaryBackground,
+                    textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                          fontFamily: 'Poppins',
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal,
+                        ),
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                child: FFButtonWidget(
+                  onPressed: isMediaUploading
+                      ? null
+                      : () async {
+                          final imagesCreateData = {
+                            ...createImagesRecordData(
+                              text: textController!.text,
+                              imageUrl: uploadedFileUrl,
+                            ),
+                            'created_date': FieldValue.serverTimestamp(),
+                          };
+                          await ImagesRecord.createDoc(widget.storyRef!)
+                              .set(imagesCreateData);
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'You image is being processed',
+                                style: TextStyle(
+                                  color:
+                                      FlutterFlowTheme.of(context).primaryText,
+                                ),
+                              ),
+                              duration: Duration(milliseconds: 4000),
+                              backgroundColor: FlutterFlowTheme.of(context)
+                                  .primaryBackground,
+                            ),
+                          );
+                        },
+                  text: 'Generate',
+                  options: FFButtonOptions(
+                    width: double.infinity,
+                    height: 50,
+                    color: FlutterFlowTheme.of(context).primaryColor,
                     textStyle: FlutterFlowTheme.of(context).subtitle2.override(
                           fontFamily: 'Poppins',
                           color: Colors.white,

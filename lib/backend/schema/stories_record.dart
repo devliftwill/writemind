@@ -18,12 +18,18 @@ abstract class StoriesRecord
   @BuiltValueField(wireName: 'created_date')
   DateTime? get createdDate;
 
+  String? get cover;
+
+  String? get audio;
+
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference? get ffRef;
   DocumentReference get reference => ffRef!;
 
-  static void _initializeBuilder(StoriesRecordBuilder builder) =>
-      builder..title = '';
+  static void _initializeBuilder(StoriesRecordBuilder builder) => builder
+    ..title = ''
+    ..cover = ''
+    ..audio = '';
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('stories');
@@ -50,6 +56,8 @@ Map<String, dynamic> createStoriesRecordData({
   DocumentReference? userRef,
   String? title,
   DateTime? createdDate,
+  String? cover,
+  String? audio,
 }) {
   final firestoreData = serializers.toFirestore(
     StoriesRecord.serializer,
@@ -57,7 +65,9 @@ Map<String, dynamic> createStoriesRecordData({
       (s) => s
         ..userRef = userRef
         ..title = title
-        ..createdDate = createdDate,
+        ..createdDate = createdDate
+        ..cover = cover
+        ..audio = audio,
     ),
   );
 

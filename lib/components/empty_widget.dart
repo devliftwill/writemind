@@ -2,6 +2,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class EmptyWidget extends StatefulWidget {
   const EmptyWidget({
@@ -22,6 +23,8 @@ class EmptyWidget extends StatefulWidget {
 class _EmptyWidgetState extends State<EmptyWidget> {
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -33,13 +36,14 @@ class _EmptyWidgetState extends State<EmptyWidget> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                widget.header!,
-                textAlign: TextAlign.center,
-                style: FlutterFlowTheme.of(context).title3.override(
-                      fontFamily: 'Poppins',
-                      color: FlutterFlowTheme.of(context).primaryText,
-                    ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                decoration: BoxDecoration(),
+                child: Text(
+                  widget.header!,
+                  textAlign: TextAlign.center,
+                  style: FlutterFlowTheme.of(context).subtitle1,
+                ),
               ),
             ],
           ),

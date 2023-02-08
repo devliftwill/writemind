@@ -41,6 +41,13 @@ class _$ImagesRecordSerializer implements StructuredSerializer<ImagesRecord> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(DateTime)));
     }
+    value = object.startTime;
+    if (value != null) {
+      result
+        ..add('start_time')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
     value = object.ffRef;
     if (value != null) {
       result
@@ -76,6 +83,10 @@ class _$ImagesRecordSerializer implements StructuredSerializer<ImagesRecord> {
           result.createdDate = serializers.deserialize(value,
               specifiedType: const FullType(DateTime)) as DateTime?;
           break;
+        case 'start_time':
+          result.startTime = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double?;
+          break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
               specifiedType: const FullType(DocumentReference, const [
@@ -97,12 +108,15 @@ class _$ImagesRecord extends ImagesRecord {
   @override
   final DateTime? createdDate;
   @override
+  final double? startTime;
+  @override
   final DocumentReference<Object?>? ffRef;
 
   factory _$ImagesRecord([void Function(ImagesRecordBuilder)? updates]) =>
       (new ImagesRecordBuilder()..update(updates))._build();
 
-  _$ImagesRecord._({this.imageUrl, this.text, this.createdDate, this.ffRef})
+  _$ImagesRecord._(
+      {this.imageUrl, this.text, this.createdDate, this.startTime, this.ffRef})
       : super._();
 
   @override
@@ -119,14 +133,17 @@ class _$ImagesRecord extends ImagesRecord {
         imageUrl == other.imageUrl &&
         text == other.text &&
         createdDate == other.createdDate &&
+        startTime == other.startTime &&
         ffRef == other.ffRef;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, imageUrl.hashCode), text.hashCode),
-            createdDate.hashCode),
+        $jc(
+            $jc($jc($jc(0, imageUrl.hashCode), text.hashCode),
+                createdDate.hashCode),
+            startTime.hashCode),
         ffRef.hashCode));
   }
 
@@ -136,6 +153,7 @@ class _$ImagesRecord extends ImagesRecord {
           ..add('imageUrl', imageUrl)
           ..add('text', text)
           ..add('createdDate', createdDate)
+          ..add('startTime', startTime)
           ..add('ffRef', ffRef))
         .toString();
   }
@@ -157,6 +175,10 @@ class ImagesRecordBuilder
   DateTime? get createdDate => _$this._createdDate;
   set createdDate(DateTime? createdDate) => _$this._createdDate = createdDate;
 
+  double? _startTime;
+  double? get startTime => _$this._startTime;
+  set startTime(double? startTime) => _$this._startTime = startTime;
+
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
   set ffRef(DocumentReference<Object?>? ffRef) => _$this._ffRef = ffRef;
@@ -171,6 +193,7 @@ class ImagesRecordBuilder
       _imageUrl = $v.imageUrl;
       _text = $v.text;
       _createdDate = $v.createdDate;
+      _startTime = $v.startTime;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -197,6 +220,7 @@ class ImagesRecordBuilder
             imageUrl: imageUrl,
             text: text,
             createdDate: createdDate,
+            startTime: startTime,
             ffRef: ffRef);
     replace(_$result);
     return _$result;

@@ -18,6 +18,9 @@ abstract class ImagesRecord
   @BuiltValueField(wireName: 'created_date')
   DateTime? get createdDate;
 
+  @BuiltValueField(wireName: 'start_time')
+  double? get startTime;
+
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference? get ffRef;
   DocumentReference get reference => ffRef!;
@@ -26,7 +29,8 @@ abstract class ImagesRecord
 
   static void _initializeBuilder(ImagesRecordBuilder builder) => builder
     ..imageUrl = ''
-    ..text = '';
+    ..text = ''
+    ..startTime = 0.0;
 
   static Query<Map<String, dynamic>> collection([DocumentReference? parent]) =>
       parent != null
@@ -58,6 +62,7 @@ Map<String, dynamic> createImagesRecordData({
   String? imageUrl,
   String? text,
   DateTime? createdDate,
+  double? startTime,
 }) {
   final firestoreData = serializers.toFirestore(
     ImagesRecord.serializer,
@@ -65,7 +70,8 @@ Map<String, dynamic> createImagesRecordData({
       (i) => i
         ..imageUrl = imageUrl
         ..text = text
-        ..createdDate = createdDate,
+        ..createdDate = createdDate
+        ..startTime = startTime,
     ),
   );
 
