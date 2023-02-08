@@ -1,37 +1,36 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'stories_record.dart';
+part of 'images_record.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<StoriesRecord> _$storiesRecordSerializer =
-    new _$StoriesRecordSerializer();
+Serializer<ImagesRecord> _$imagesRecordSerializer =
+    new _$ImagesRecordSerializer();
 
-class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
+class _$ImagesRecordSerializer implements StructuredSerializer<ImagesRecord> {
   @override
-  final Iterable<Type> types = const [StoriesRecord, _$StoriesRecord];
+  final Iterable<Type> types = const [ImagesRecord, _$ImagesRecord];
   @override
-  final String wireName = 'StoriesRecord';
+  final String wireName = 'ImagesRecord';
 
   @override
-  Iterable<Object?> serialize(Serializers serializers, StoriesRecord object,
+  Iterable<Object?> serialize(Serializers serializers, ImagesRecord object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object?>[];
     Object? value;
-    value = object.userRef;
+    value = object.imageUrl;
     if (value != null) {
       result
-        ..add('user_ref')
+        ..add('image_url')
         ..add(serializers.serialize(value,
-            specifiedType: const FullType(
-                DocumentReference, const [const FullType.nullable(Object)])));
+            specifiedType: const FullType(String)));
     }
-    value = object.title;
+    value = object.text;
     if (value != null) {
       result
-        ..add('title')
+        ..add('text')
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
@@ -42,19 +41,12 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(DateTime)));
     }
-    value = object.cover;
+    value = object.startTime;
     if (value != null) {
       result
-        ..add('cover')
+        ..add('start_time')
         ..add(serializers.serialize(value,
-            specifiedType: const FullType(String)));
-    }
-    value = object.audio;
-    if (value != null) {
-      result
-        ..add('audio')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(String)));
+            specifiedType: const FullType(double)));
     }
     value = object.ffRef;
     if (value != null) {
@@ -68,10 +60,10 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
   }
 
   @override
-  StoriesRecord deserialize(
+  ImagesRecord deserialize(
       Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new StoriesRecordBuilder();
+    final result = new ImagesRecordBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -79,27 +71,21 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
-        case 'user_ref':
-          result.userRef = serializers.deserialize(value,
-              specifiedType: const FullType(DocumentReference, const [
-                const FullType.nullable(Object)
-              ])) as DocumentReference<Object?>?;
+        case 'image_url':
+          result.imageUrl = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
           break;
-        case 'title':
-          result.title = serializers.deserialize(value,
+        case 'text':
+          result.text = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
           break;
         case 'created_date':
           result.createdDate = serializers.deserialize(value,
               specifiedType: const FullType(DateTime)) as DateTime?;
           break;
-        case 'cover':
-          result.cover = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String?;
-          break;
-        case 'audio':
-          result.audio = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String?;
+        case 'start_time':
+          result.startTime = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double?;
           break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
@@ -114,48 +100,40 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
   }
 }
 
-class _$StoriesRecord extends StoriesRecord {
+class _$ImagesRecord extends ImagesRecord {
   @override
-  final DocumentReference<Object?>? userRef;
+  final String? imageUrl;
   @override
-  final String? title;
+  final String? text;
   @override
   final DateTime? createdDate;
   @override
-  final String? cover;
-  @override
-  final String? audio;
+  final double? startTime;
   @override
   final DocumentReference<Object?>? ffRef;
 
-  factory _$StoriesRecord([void Function(StoriesRecordBuilder)? updates]) =>
-      (new StoriesRecordBuilder()..update(updates))._build();
+  factory _$ImagesRecord([void Function(ImagesRecordBuilder)? updates]) =>
+      (new ImagesRecordBuilder()..update(updates))._build();
 
-  _$StoriesRecord._(
-      {this.userRef,
-      this.title,
-      this.createdDate,
-      this.cover,
-      this.audio,
-      this.ffRef})
+  _$ImagesRecord._(
+      {this.imageUrl, this.text, this.createdDate, this.startTime, this.ffRef})
       : super._();
 
   @override
-  StoriesRecord rebuild(void Function(StoriesRecordBuilder) updates) =>
+  ImagesRecord rebuild(void Function(ImagesRecordBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  StoriesRecordBuilder toBuilder() => new StoriesRecordBuilder()..replace(this);
+  ImagesRecordBuilder toBuilder() => new ImagesRecordBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is StoriesRecord &&
-        userRef == other.userRef &&
-        title == other.title &&
+    return other is ImagesRecord &&
+        imageUrl == other.imageUrl &&
+        text == other.text &&
         createdDate == other.createdDate &&
-        cover == other.cover &&
-        audio == other.audio &&
+        startTime == other.startTime &&
         ffRef == other.ffRef;
   }
 
@@ -163,67 +141,59 @@ class _$StoriesRecord extends StoriesRecord {
   int get hashCode {
     return $jf($jc(
         $jc(
-            $jc(
-                $jc($jc($jc(0, userRef.hashCode), title.hashCode),
-                    createdDate.hashCode),
-                cover.hashCode),
-            audio.hashCode),
+            $jc($jc($jc(0, imageUrl.hashCode), text.hashCode),
+                createdDate.hashCode),
+            startTime.hashCode),
         ffRef.hashCode));
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper(r'StoriesRecord')
-          ..add('userRef', userRef)
-          ..add('title', title)
+    return (newBuiltValueToStringHelper(r'ImagesRecord')
+          ..add('imageUrl', imageUrl)
+          ..add('text', text)
           ..add('createdDate', createdDate)
-          ..add('cover', cover)
-          ..add('audio', audio)
+          ..add('startTime', startTime)
           ..add('ffRef', ffRef))
         .toString();
   }
 }
 
-class StoriesRecordBuilder
-    implements Builder<StoriesRecord, StoriesRecordBuilder> {
-  _$StoriesRecord? _$v;
+class ImagesRecordBuilder
+    implements Builder<ImagesRecord, ImagesRecordBuilder> {
+  _$ImagesRecord? _$v;
 
-  DocumentReference<Object?>? _userRef;
-  DocumentReference<Object?>? get userRef => _$this._userRef;
-  set userRef(DocumentReference<Object?>? userRef) => _$this._userRef = userRef;
+  String? _imageUrl;
+  String? get imageUrl => _$this._imageUrl;
+  set imageUrl(String? imageUrl) => _$this._imageUrl = imageUrl;
 
-  String? _title;
-  String? get title => _$this._title;
-  set title(String? title) => _$this._title = title;
+  String? _text;
+  String? get text => _$this._text;
+  set text(String? text) => _$this._text = text;
 
   DateTime? _createdDate;
   DateTime? get createdDate => _$this._createdDate;
   set createdDate(DateTime? createdDate) => _$this._createdDate = createdDate;
 
-  String? _cover;
-  String? get cover => _$this._cover;
-  set cover(String? cover) => _$this._cover = cover;
-
-  String? _audio;
-  String? get audio => _$this._audio;
-  set audio(String? audio) => _$this._audio = audio;
+  double? _startTime;
+  double? get startTime => _$this._startTime;
+  set startTime(double? startTime) => _$this._startTime = startTime;
 
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
   set ffRef(DocumentReference<Object?>? ffRef) => _$this._ffRef = ffRef;
 
-  StoriesRecordBuilder() {
-    StoriesRecord._initializeBuilder(this);
+  ImagesRecordBuilder() {
+    ImagesRecord._initializeBuilder(this);
   }
 
-  StoriesRecordBuilder get _$this {
+  ImagesRecordBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _userRef = $v.userRef;
-      _title = $v.title;
+      _imageUrl = $v.imageUrl;
+      _text = $v.text;
       _createdDate = $v.createdDate;
-      _cover = $v.cover;
-      _audio = $v.audio;
+      _startTime = $v.startTime;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -231,27 +201,26 @@ class StoriesRecordBuilder
   }
 
   @override
-  void replace(StoriesRecord other) {
+  void replace(ImagesRecord other) {
     ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$StoriesRecord;
+    _$v = other as _$ImagesRecord;
   }
 
   @override
-  void update(void Function(StoriesRecordBuilder)? updates) {
+  void update(void Function(ImagesRecordBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  StoriesRecord build() => _build();
+  ImagesRecord build() => _build();
 
-  _$StoriesRecord _build() {
+  _$ImagesRecord _build() {
     final _$result = _$v ??
-        new _$StoriesRecord._(
-            userRef: userRef,
-            title: title,
+        new _$ImagesRecord._(
+            imageUrl: imageUrl,
+            text: text,
             createdDate: createdDate,
-            cover: cover,
-            audio: audio,
+            startTime: startTime,
             ffRef: ffRef);
     replace(_$result);
     return _$result;

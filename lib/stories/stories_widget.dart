@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class StoriesWidget extends StatefulWidget {
   const StoriesWidget({Key? key}) : super(key: key);
@@ -56,6 +57,8 @@ class _StoriesWidgetState extends State<StoriesWidget>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -74,11 +77,14 @@ class _StoriesWidgetState extends State<StoriesWidget>
           context.pushNamed(
             'StoryDetails',
             queryParams: {
-              'storyRef': serializeParam(
-                story!.reference,
-                ParamType.DocumentReference,
+              'storyDoc': serializeParam(
+                story,
+                ParamType.Document,
               ),
             }.withoutNulls,
+            extra: <String, dynamic>{
+              'storyDoc': story,
+            },
           );
 
           setState(() {});
@@ -196,7 +202,18 @@ class _StoriesWidgetState extends State<StoriesWidget>
                         List<StoriesRecord> listViewStoriesRecordList =
                             snapshot.data!;
                         if (listViewStoriesRecordList.isEmpty) {
-                          return EmptyWidget();
+                          return EmptyWidget(
+                            icon: Icon(
+                              Icons.menu_book,
+                              color:
+                                  FlutterFlowTheme.of(context).secondaryColor,
+                              size: 50,
+                            ),
+                            header:
+                                'Looks like you don\'t have any stories yet.',
+                            body:
+                                'Lorem ipsum dolor sit amet, consetetur  sadipscing elitr, sed diam nonumy eirmod.',
+                          );
                         }
                         return ListView.builder(
                           padding: EdgeInsets.zero,
@@ -214,11 +231,14 @@ class _StoriesWidgetState extends State<StoriesWidget>
                                   context.pushNamed(
                                     'StoryDetails',
                                     queryParams: {
-                                      'storyRef': serializeParam(
-                                        listViewStoriesRecord.reference,
-                                        ParamType.DocumentReference,
+                                      'storyDoc': serializeParam(
+                                        listViewStoriesRecord,
+                                        ParamType.Document,
                                       ),
                                     }.withoutNulls,
+                                    extra: <String, dynamic>{
+                                      'storyDoc': listViewStoriesRecord,
+                                    },
                                   );
                                 },
                                 child: StoryWidget(

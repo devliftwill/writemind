@@ -1,25 +1,28 @@
+import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
-class StoryActionsWidget extends StatefulWidget {
-  const StoryActionsWidget({
+class ImageActionsWidget extends StatefulWidget {
+  const ImageActionsWidget({
     Key? key,
-    this.storyDoc,
+    this.storyRef,
+    this.imageDoc,
   }) : super(key: key);
 
-  final StoriesRecord? storyDoc;
+  final DocumentReference? storyRef;
+  final ImagesRecord? imageDoc;
 
   @override
-  _StoryActionsWidgetState createState() => _StoryActionsWidgetState();
+  _ImageActionsWidgetState createState() => _ImageActionsWidgetState();
 }
 
-class _StoryActionsWidgetState extends State<StoryActionsWidget> {
+class _ImageActionsWidgetState extends State<ImageActionsWidget> {
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -43,16 +46,19 @@ class _StoryActionsWidgetState extends State<StoryActionsWidget> {
           children: [
             FFButtonWidget(
               onPressed: () async {
-                context.pushNamed(
-                  'StoryDetails',
-                  queryParams: {
-                    'storyDoc': serializeParam(
-                      widget.storyDoc,
-                      ParamType.Document,
-                    ),
-                  }.withoutNulls,
-                  extra: <String, dynamic>{
-                    'storyDoc': widget.storyDoc,
+                await showDialog(
+                  context: context,
+                  builder: (alertDialogContext) {
+                    return AlertDialog(
+                      title: Text('TODO'),
+                      content: Text('TODO'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(alertDialogContext),
+                          child: Text('Ok'),
+                        ),
+                      ],
+                    );
                   },
                 );
               },
@@ -73,32 +79,31 @@ class _StoryActionsWidgetState extends State<StoryActionsWidget> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            Builder(
-              builder: (context) => Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                child: FFButtonWidget(
-                  onPressed: () async {
-                    await Share.share(
-                      widget.storyDoc!.title!,
-                      sharePositionOrigin: getWidgetBoundingBox(context),
-                    );
-                  },
-                  text: 'Share',
-                  options: FFButtonOptions(
-                    width: double.infinity,
-                    height: 50,
-                    color: FlutterFlowTheme.of(context).secondaryBackground,
-                    textStyle: FlutterFlowTheme.of(context).subtitle2.override(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal,
-                        ),
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+              child: FFButtonWidget(
+                onPressed: () async {
+                  final storiesUpdateData = createStoriesRecordData(
+                    cover: widget.imageDoc!.imageUrl,
+                  );
+                  await widget.storyRef!.update(storiesUpdateData);
+                  Navigator.pop(context);
+                },
+                text: 'Set as story cover',
+                options: FFButtonOptions(
+                  width: double.infinity,
+                  height: 50,
+                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                  textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                        fontFamily: 'Poppins',
+                        color: Colors.white,
+                        fontWeight: FontWeight.normal,
+                      ),
+                  borderSide: BorderSide(
+                    color: Colors.transparent,
+                    width: 1,
                   ),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
@@ -112,7 +117,7 @@ class _StoryActionsWidgetState extends State<StoryActionsWidget> {
                           return AlertDialog(
                             title: Text('Are you sure?'),
                             content:
-                                Text('This story will be perminantly removed'),
+                                Text('This image will be perminantly removed'),
                             actions: [
                               TextButton(
                                 onPressed: () =>
@@ -130,7 +135,7 @@ class _StoryActionsWidgetState extends State<StoryActionsWidget> {
                       ) ??
                       false;
                   if (confirmDialogResponse) {
-                    await widget.storyDoc!.reference.delete();
+                    await widget.imageDoc!.reference.delete();
                   }
                   Navigator.pop(context);
                 },

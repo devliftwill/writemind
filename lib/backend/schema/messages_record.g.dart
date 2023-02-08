@@ -43,6 +43,13 @@ class _$MessagesRecordSerializer
             specifiedType: const FullType(
                 DocumentReference, const [const FullType.nullable(Object)])));
     }
+    value = object.convertToAudio;
+    if (value != null) {
+      result
+        ..add('convert_to_audio')
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(bool)));
+    }
     value = object.ffRef;
     if (value != null) {
       result
@@ -80,6 +87,10 @@ class _$MessagesRecordSerializer
                 const FullType.nullable(Object)
               ])) as DocumentReference<Object?>?;
           break;
+        case 'convert_to_audio':
+          result.convertToAudio = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool?;
+          break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
               specifiedType: const FullType(DocumentReference, const [
@@ -101,12 +112,19 @@ class _$MessagesRecord extends MessagesRecord {
   @override
   final DocumentReference<Object?>? senderRef;
   @override
+  final bool? convertToAudio;
+  @override
   final DocumentReference<Object?>? ffRef;
 
   factory _$MessagesRecord([void Function(MessagesRecordBuilder)? updates]) =>
       (new MessagesRecordBuilder()..update(updates))._build();
 
-  _$MessagesRecord._({this.text, this.createdDate, this.senderRef, this.ffRef})
+  _$MessagesRecord._(
+      {this.text,
+      this.createdDate,
+      this.senderRef,
+      this.convertToAudio,
+      this.ffRef})
       : super._();
 
   @override
@@ -124,14 +142,17 @@ class _$MessagesRecord extends MessagesRecord {
         text == other.text &&
         createdDate == other.createdDate &&
         senderRef == other.senderRef &&
+        convertToAudio == other.convertToAudio &&
         ffRef == other.ffRef;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, text.hashCode), createdDate.hashCode),
-            senderRef.hashCode),
+        $jc(
+            $jc($jc($jc(0, text.hashCode), createdDate.hashCode),
+                senderRef.hashCode),
+            convertToAudio.hashCode),
         ffRef.hashCode));
   }
 
@@ -141,6 +162,7 @@ class _$MessagesRecord extends MessagesRecord {
           ..add('text', text)
           ..add('createdDate', createdDate)
           ..add('senderRef', senderRef)
+          ..add('convertToAudio', convertToAudio)
           ..add('ffRef', ffRef))
         .toString();
   }
@@ -163,6 +185,11 @@ class MessagesRecordBuilder
   set senderRef(DocumentReference<Object?>? senderRef) =>
       _$this._senderRef = senderRef;
 
+  bool? _convertToAudio;
+  bool? get convertToAudio => _$this._convertToAudio;
+  set convertToAudio(bool? convertToAudio) =>
+      _$this._convertToAudio = convertToAudio;
+
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
   set ffRef(DocumentReference<Object?>? ffRef) => _$this._ffRef = ffRef;
@@ -177,6 +204,7 @@ class MessagesRecordBuilder
       _text = $v.text;
       _createdDate = $v.createdDate;
       _senderRef = $v.senderRef;
+      _convertToAudio = $v.convertToAudio;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -203,6 +231,7 @@ class MessagesRecordBuilder
             text: text,
             createdDate: createdDate,
             senderRef: senderRef,
+            convertToAudio: convertToAudio,
             ffRef: ffRef);
     replace(_$result);
     return _$result;
