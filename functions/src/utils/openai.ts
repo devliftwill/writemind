@@ -8,7 +8,7 @@ const openai = new OpenAIApi(configuration);
 
 export const createCompletion = async (prompt: string, user:string) => {
   return openai.createCompletion({
-    model: "text-davinci-002",
+    model: "text-davinci-003",
     max_tokens: 1000,
     prompt,
     user,
