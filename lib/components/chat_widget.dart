@@ -374,6 +374,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                                       text: chatTextFieldController!.text,
                                       createdDate: getCurrentTimestamp,
                                       senderRef: currentUserReference,
+                                      isAi: false,
                                     );
                                     await MessagesRecord.createDoc(
                                             widget.storyRef!)

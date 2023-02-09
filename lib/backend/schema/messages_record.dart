@@ -22,6 +22,9 @@ abstract class MessagesRecord
   @BuiltValueField(wireName: 'convert_to_audio')
   bool? get convertToAudio;
 
+  @BuiltValueField(wireName: 'is_ai')
+  bool? get isAi;
+
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference? get ffRef;
   DocumentReference get reference => ffRef!;
@@ -30,7 +33,8 @@ abstract class MessagesRecord
 
   static void _initializeBuilder(MessagesRecordBuilder builder) => builder
     ..text = ''
-    ..convertToAudio = false;
+    ..convertToAudio = false
+    ..isAi = false;
 
   static Query<Map<String, dynamic>> collection([DocumentReference? parent]) =>
       parent != null
@@ -63,6 +67,7 @@ Map<String, dynamic> createMessagesRecordData({
   DateTime? createdDate,
   DocumentReference? senderRef,
   bool? convertToAudio,
+  bool? isAi,
 }) {
   final firestoreData = serializers.toFirestore(
     MessagesRecord.serializer,
@@ -71,7 +76,8 @@ Map<String, dynamic> createMessagesRecordData({
         ..text = text
         ..createdDate = createdDate
         ..senderRef = senderRef
-        ..convertToAudio = convertToAudio,
+        ..convertToAudio = convertToAudio
+        ..isAi = isAi,
     ),
   );
 
