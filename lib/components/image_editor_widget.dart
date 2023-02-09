@@ -28,19 +28,25 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
   bool isMediaUploading = false;
   String uploadedFileUrl = '';
 
-  TextEditingController? textController;
+  TextEditingController? textController1;
+  TextEditingController? textController2;
   final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    textController = TextEditingController(
+    textController1 = TextEditingController(
         text: widget.imageDoc != null ? widget.imageDoc!.text : '');
+    textController2 = TextEditingController(
+        text: widget.imageDoc != null
+            ? widget.imageDoc!.seconds?.toString()
+            : '');
   }
 
   @override
   void dispose() {
-    textController?.dispose();
+    textController1?.dispose();
+    textController2?.dispose();
     super.dispose();
   }
 
@@ -50,7 +56,7 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
 
     return Container(
       width: double.infinity,
-      height: 260,
+      height: 320,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).primaryBackground,
         borderRadius: BorderRadius.only(
@@ -69,7 +75,7 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               TextFormField(
-                controller: textController,
+                controller: textController1,
                 autofocus: true,
                 obscureText: false,
                 decoration: InputDecoration(
@@ -121,6 +127,62 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
                 style: FlutterFlowTheme.of(context).bodyText1,
                 maxLines: 4,
                 minLines: 4,
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                child: TextFormField(
+                  controller: textController2,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    hintText: 'Timestamp in seconds',
+                    hintStyle: FlutterFlowTheme.of(context).bodyText2,
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 1,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(4.0),
+                        topRight: Radius.circular(4.0),
+                      ),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 1,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(4.0),
+                        topRight: Radius.circular(4.0),
+                      ),
+                    ),
+                    errorBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 1,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(4.0),
+                        topRight: Radius.circular(4.0),
+                      ),
+                    ),
+                    focusedErrorBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 1,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(4.0),
+                        topRight: Radius.circular(4.0),
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                  ),
+                  style: FlutterFlowTheme.of(context).bodyText1,
+                  minLines: 1,
+                  keyboardType: TextInputType.number,
+                ),
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
@@ -189,15 +251,17 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
                       : () async {
                           if (widget.imageDoc != null) {
                             final imagesUpdateData = createImagesRecordData(
-                              text: textController!.text,
+                              text: textController1!.text,
+                              seconds: int.tryParse(textController2!.text),
                             );
                             await widget.imageDoc!.reference
                                 .update(imagesUpdateData);
                           } else {
                             final imagesCreateData = {
                               ...createImagesRecordData(
-                                text: textController!.text,
+                                text: textController1!.text,
                                 imageUrl: uploadedFileUrl,
+                                seconds: int.tryParse(textController2!.text),
                               ),
                               'created_date': FieldValue.serverTimestamp(),
                             };

@@ -12,8 +12,16 @@ class PlaygroundWidget extends StatefulWidget {
 }
 
 class _PlaygroundWidgetState extends State<PlaygroundWidget> {
+  double? sliderValue;
   final _unfocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+  }
 
   @override
   void dispose() {
@@ -36,7 +44,33 @@ class _PlaygroundWidgetState extends State<PlaygroundWidget> {
             children: [
               Row(
                 mainAxisSize: MainAxisSize.max,
-                children: [],
+                children: [
+                  Icon(
+                    Icons.play_arrow,
+                    color: FlutterFlowTheme.of(context).secondaryColor,
+                    size: 24,
+                  ),
+                  Expanded(
+                    child: Slider(
+                      activeColor: FlutterFlowTheme.of(context).primaryColor,
+                      inactiveColor: Color(0xFF9E9E9E),
+                      min: 0,
+                      max: 10,
+                      value: sliderValue ??= 0,
+                      onChanged: (newValue) {
+                        newValue = double.parse(newValue.toStringAsFixed(6));
+                        setState(() => sliderValue = newValue);
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                    child: Text(
+                      '0:00',
+                      style: FlutterFlowTheme.of(context).bodyText1,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
