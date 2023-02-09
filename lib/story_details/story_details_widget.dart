@@ -5,12 +5,12 @@ import '../components/empty_widget.dart';
 import '../components/image_actions_widget.dart';
 import '../components/image_editor_widget.dart';
 import '../flutter_flow/flutter_flow_animations.dart';
-import '../flutter_flow/flutter_flow_audio_player.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
+import '../custom_code/widgets/index.dart' as custom_widgets;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -211,7 +211,7 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
                                 ),
                                 child: Container(
                                   width: double.infinity,
-                                  height: 75,
+                                  height: 150,
                                   decoration: BoxDecoration(
                                     color: Color(0x801D2429),
                                   ),
@@ -223,37 +223,19 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        FlutterFlowAudioPlayer(
-                                          audio: Audio.network(
-                                            containerStoriesRecord.audio!,
-                                            metas: Metas(
-                                              id: 'sample3.mp3-507trkxh',
-                                              title:
-                                                  containerStoriesRecord.title,
+                                        if (widget.storyDoc!.audio != null &&
+                                            widget.storyDoc!.audio != '')
+                                          Container(
+                                            width: double.infinity,
+                                            height: 120,
+                                            child: custom_widgets
+                                                .AudioPayerExtended(
+                                              width: double.infinity,
+                                              height: 120,
+                                              audio: widget.storyDoc!.audio!,
+                                              onDurationChanged: () async {},
                                             ),
                                           ),
-                                          titleTextStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyText1
-                                                  .override(
-                                                    fontFamily: 'Poppins',
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                          playbackDurationTextStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyText1
-                                                  .override(
-                                                    fontFamily: 'Poppins',
-                                                    color: Color(0xFF9D9D9D),
-                                                    fontSize: 12,
-                                                  ),
-                                          fillColor: Color(0x00000000),
-                                          playbackButtonColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .secondaryColor,
-                                          activeTrackColor: Color(0xFF57636C),
-                                          elevation: 4,
-                                        ),
                                       ],
                                     ),
                                   ),

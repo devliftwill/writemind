@@ -14,9 +14,11 @@ class ImageEditorWidget extends StatefulWidget {
   const ImageEditorWidget({
     Key? key,
     this.storyRef,
+    this.imageDoc,
   }) : super(key: key);
 
   final DocumentReference? storyRef;
+  final ImagesRecord? imageDoc;
 
   @override
   _ImageEditorWidgetState createState() => _ImageEditorWidgetState();
@@ -32,7 +34,8 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
   @override
   void initState() {
     super.initState();
-    textController = TextEditingController();
+    textController = TextEditingController(
+        text: widget.imageDoc != null ? widget.imageDoc!.text : '');
   }
 
   @override
@@ -184,15 +187,24 @@ class _ImageEditorWidgetState extends State<ImageEditorWidget> {
                   onPressed: isMediaUploading
                       ? null
                       : () async {
-                          final imagesCreateData = {
-                            ...createImagesRecordData(
+                          if (widget.imageDoc != null) {
+                            final imagesUpdateData = createImagesRecordData(
                               text: textController!.text,
-                              imageUrl: uploadedFileUrl,
-                            ),
-                            'created_date': FieldValue.serverTimestamp(),
-                          };
-                          await ImagesRecord.createDoc(widget.storyRef!)
-                              .set(imagesCreateData);
+                            );
+                            await widget.imageDoc!.reference
+                                .update(imagesUpdateData);
+                          } else {
+                            final imagesCreateData = {
+                              ...createImagesRecordData(
+                                text: textController!.text,
+                                imageUrl: uploadedFileUrl,
+                              ),
+                              'created_date': FieldValue.serverTimestamp(),
+                            };
+                            await ImagesRecord.createDoc(widget.storyRef!)
+                                .set(imagesCreateData);
+                          }
+
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
