@@ -20,6 +20,7 @@
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.18.0",
     "got": "^11.8.0",
+    "https": "^1.0.0",
     "node-fetch": "^2.6.1",
     "openai": "^3.1.0",
     "unfetch": "^5.0.0"

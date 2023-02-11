@@ -4,6 +4,7 @@ import fs from "fs";
 import util from "util";
 import textToSpeech from "@google-cloud/text-to-speech"; // Imports the Google Cloud client library
 import {saveToStorage} from "../../utils/file";
+import {getPredictions} from "../../utils/riffusion";
 
 export const messageOnUpdate = functions.runWith({memory: "8GB", timeoutSeconds: 540}).firestore
     .document("stories/{storyId}/messages/{docId}")
@@ -16,10 +17,13 @@ export const messageOnUpdate = functions.runWith({memory: "8GB", timeoutSeconds:
           const outputFile = `${context.params.docId}.mp3`;
           if (message && message.convert_to_audio) {
             const client = new textToSpeech.TextToSpeechClient();
+            const db = admin.firestore();
+            const storyRef = db.collection("stories");
+            const audioQueueRef = db.collection("audio_queue");
 
             const request = {
               input: {text: message.text},
-              voice: {languageCode: "en-US", ssmlGender: "FEMALE"},
+              voice: {languageCode: message.language_code || "en-US", ssmlGender: message.ssml_gender || "FEMALE"},
               audioConfig: {audioEncoding: "MP3"},
             };
             const tempPath = `/tmp/${outputFile}`;
@@ -29,12 +33,22 @@ export const messageOnUpdate = functions.runWith({memory: "8GB", timeoutSeconds:
 
 
             const destinationPath = `audio/${context.params.storyId}/` + outputFile;
-            const db = admin.firestore();
+
             const url = await saveToStorage(destinationPath, tempPath);
             const storyDoc = {
               "audio": url,
             };
-            return db.collection("stories").doc(context.params.storyId).update(storyDoc);
+
+            if (message.generate_background_music && message.background_music_prompt) {
+              const response = await getPredictions(message.background_music_prompt);
+              const {urls} = await response.json();
+              audioQueueRef.add({
+                "story_ref": storyRef,
+                "url": urls.get,
+              });
+            }
+
+            return storyRef.doc(context.params.storyId).update(storyDoc);
           } else {
             return Promise.resolve();
           }

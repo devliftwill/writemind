@@ -16,11 +16,21 @@ export const createCompletion = async (prompt: string, user:string) => {
 };
 
 
-export const createImage = async (prompt: string, user:string) => {
+export const createImage = async (prompt: string) => {
   return openai.createImage({
     n: 1,
-    size: "256x256",
+    size: "512x512",
     prompt,
-    user,
   });
+};
+
+
+export const createImageEdit = async (prompt: string, image:File, mask:File) => {
+  return openai.createImageEdit(
+      image,
+      mask,
+      `3D render ${prompt} digital art elegant, highly detailed 8k`,
+      1,
+      "512x512",
+  );
 };

@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
 import fs from "fs";
+import fetch from "node-fetch";
 export const saveToStorage = async (path: string, tempPath: string) => {
   // const destinationPath = `audio/${context.params.storyId}/` + outputFile;
 
@@ -7,8 +8,8 @@ export const saveToStorage = async (path: string, tempPath: string) => {
   const storageRef = admin.storage().bucket(storagePath);
   const file = storageRef.file(path);
 
-  return new Promise( function(resolve, reject ) {
-  // TODO: rewrite this mess
+  return new Promise(function(resolve, reject) {
+    // TODO: rewrite this mess
     fs.open(tempPath, "r", function(err, fileToRead) {
       if (!err) {
         fs.readFile(fileToRead, async function(err, data) {
@@ -37,6 +38,23 @@ export const saveToStorage = async (path: string, tempPath: string) => {
         console.log(err);
         reject(err);
       }
+    });
+  });
+};
+
+export const convertToFile = async (url: string, localPath: string): Promise<string> => {
+  const file = fs.createWriteStream(localPath);
+  const resp = await fetch(url as string);
+
+  resp?.body?.pipe(file);
+
+
+  return new Promise((resolve, reject) => {
+    resp?.body?.pipe(file);
+
+    // after download completed close filestream
+    file.on("finish", async () => {
+      resolve(localPath);
     });
   });
 };
