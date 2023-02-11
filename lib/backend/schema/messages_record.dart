@@ -25,6 +25,18 @@ abstract class MessagesRecord
   @BuiltValueField(wireName: 'is_ai')
   bool? get isAi;
 
+  @BuiltValueField(wireName: 'language_code')
+  String? get languageCode;
+
+  @BuiltValueField(wireName: 'ssml_gender')
+  String? get ssmlGender;
+
+  @BuiltValueField(wireName: 'generate_background_music')
+  bool? get generateBackgroundMusic;
+
+  @BuiltValueField(wireName: 'background_music_prompt')
+  String? get backgroundMusicPrompt;
+
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference? get ffRef;
   DocumentReference get reference => ffRef!;
@@ -34,7 +46,11 @@ abstract class MessagesRecord
   static void _initializeBuilder(MessagesRecordBuilder builder) => builder
     ..text = ''
     ..convertToAudio = false
-    ..isAi = false;
+    ..isAi = false
+    ..languageCode = ''
+    ..ssmlGender = ''
+    ..generateBackgroundMusic = false
+    ..backgroundMusicPrompt = '';
 
   static Query<Map<String, dynamic>> collection([DocumentReference? parent]) =>
       parent != null
@@ -68,6 +84,10 @@ Map<String, dynamic> createMessagesRecordData({
   DocumentReference? senderRef,
   bool? convertToAudio,
   bool? isAi,
+  String? languageCode,
+  String? ssmlGender,
+  bool? generateBackgroundMusic,
+  String? backgroundMusicPrompt,
 }) {
   final firestoreData = serializers.toFirestore(
     MessagesRecord.serializer,
@@ -77,7 +97,11 @@ Map<String, dynamic> createMessagesRecordData({
         ..createdDate = createdDate
         ..senderRef = senderRef
         ..convertToAudio = convertToAudio
-        ..isAi = isAi,
+        ..isAi = isAi
+        ..languageCode = languageCode
+        ..ssmlGender = ssmlGender
+        ..generateBackgroundMusic = generateBackgroundMusic
+        ..backgroundMusicPrompt = backgroundMusicPrompt,
     ),
   );
 

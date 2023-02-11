@@ -5,6 +5,9 @@ import 'users_record.dart';
 import 'stories_record.dart';
 import 'messages_record.dart';
 import 'images_record.dart';
+import 'video_exports_record.dart';
+import 'audio_queue_record.dart';
+import 'background_audio_record.dart';
 
 import 'index.dart';
 
@@ -19,6 +22,9 @@ const kDocumentReferenceField = 'Document__Reference__Field';
   StoriesRecord,
   MessagesRecord,
   ImagesRecord,
+  VideoExportsRecord,
+  AudioQueueRecord,
+  BackgroundAudioRecord,
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(DocumentReferenceSerializer())

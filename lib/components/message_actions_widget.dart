@@ -1,5 +1,6 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../components/audio_editor_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
@@ -7,20 +8,45 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'message_actions_model.dart';
+export 'message_actions_model.dart';
 
 class MessageActionsWidget extends StatefulWidget {
   const MessageActionsWidget({
     Key? key,
     this.messageDoc,
+    this.storyDoc,
   }) : super(key: key);
 
   final MessagesRecord? messageDoc;
+  final StoriesRecord? storyDoc;
 
   @override
   _MessageActionsWidgetState createState() => _MessageActionsWidgetState();
 }
 
 class _MessageActionsWidgetState extends State<MessageActionsWidget> {
+  late MessageActionsModel _model;
+
+  @override
+  void setState(VoidCallback callback) {
+    super.setState(callback);
+    _model.onUpdate();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => MessageActionsModel());
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -50,9 +76,25 @@ class _MessageActionsWidgetState extends State<MessageActionsWidget> {
                     convertToAudio: true,
                   );
                   await widget.messageDoc!.reference.update(messagesUpdateData);
+                  await showModalBottomSheet(
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    enableDrag: false,
+                    context: context,
+                    builder: (context) {
+                      return Padding(
+                        padding: MediaQuery.of(context).viewInsets,
+                        child: AudioEditorWidget(
+                          messageDoc: widget.messageDoc,
+                          storyDoc: widget.storyDoc,
+                        ),
+                      );
+                    },
+                  ).then((value) => setState(() {}));
+
                   Navigator.pop(context);
                 },
-                text: 'Use as story',
+                text: 'Generate audio',
                 options: FFButtonOptions(
                   width: double.infinity,
                   height: 50,

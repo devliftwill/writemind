@@ -56,6 +56,27 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.isAiLoading;
+    if (value != null) {
+      result
+        ..add('is_ai_loading')
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(bool)));
+    }
+    value = object.backgroundAudioUrl;
+    if (value != null) {
+      result
+        ..add('background_audio_url')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.status;
+    if (value != null) {
+      result
+        ..add('status')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
     value = object.ffRef;
     if (value != null) {
       result
@@ -101,6 +122,18 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
           result.audio = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
           break;
+        case 'is_ai_loading':
+          result.isAiLoading = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool?;
+          break;
+        case 'background_audio_url':
+          result.backgroundAudioUrl = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'status':
+          result.status = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
               specifiedType: const FullType(DocumentReference, const [
@@ -126,6 +159,12 @@ class _$StoriesRecord extends StoriesRecord {
   @override
   final String? audio;
   @override
+  final bool? isAiLoading;
+  @override
+  final String? backgroundAudioUrl;
+  @override
+  final String? status;
+  @override
   final DocumentReference<Object?>? ffRef;
 
   factory _$StoriesRecord([void Function(StoriesRecordBuilder)? updates]) =>
@@ -137,6 +176,9 @@ class _$StoriesRecord extends StoriesRecord {
       this.createdDate,
       this.cover,
       this.audio,
+      this.isAiLoading,
+      this.backgroundAudioUrl,
+      this.status,
       this.ffRef})
       : super._();
 
@@ -156,6 +198,9 @@ class _$StoriesRecord extends StoriesRecord {
         createdDate == other.createdDate &&
         cover == other.cover &&
         audio == other.audio &&
+        isAiLoading == other.isAiLoading &&
+        backgroundAudioUrl == other.backgroundAudioUrl &&
+        status == other.status &&
         ffRef == other.ffRef;
   }
 
@@ -164,10 +209,16 @@ class _$StoriesRecord extends StoriesRecord {
     return $jf($jc(
         $jc(
             $jc(
-                $jc($jc($jc(0, userRef.hashCode), title.hashCode),
-                    createdDate.hashCode),
-                cover.hashCode),
-            audio.hashCode),
+                $jc(
+                    $jc(
+                        $jc(
+                            $jc($jc($jc(0, userRef.hashCode), title.hashCode),
+                                createdDate.hashCode),
+                            cover.hashCode),
+                        audio.hashCode),
+                    isAiLoading.hashCode),
+                backgroundAudioUrl.hashCode),
+            status.hashCode),
         ffRef.hashCode));
   }
 
@@ -179,6 +230,9 @@ class _$StoriesRecord extends StoriesRecord {
           ..add('createdDate', createdDate)
           ..add('cover', cover)
           ..add('audio', audio)
+          ..add('isAiLoading', isAiLoading)
+          ..add('backgroundAudioUrl', backgroundAudioUrl)
+          ..add('status', status)
           ..add('ffRef', ffRef))
         .toString();
   }
@@ -208,6 +262,19 @@ class StoriesRecordBuilder
   String? get audio => _$this._audio;
   set audio(String? audio) => _$this._audio = audio;
 
+  bool? _isAiLoading;
+  bool? get isAiLoading => _$this._isAiLoading;
+  set isAiLoading(bool? isAiLoading) => _$this._isAiLoading = isAiLoading;
+
+  String? _backgroundAudioUrl;
+  String? get backgroundAudioUrl => _$this._backgroundAudioUrl;
+  set backgroundAudioUrl(String? backgroundAudioUrl) =>
+      _$this._backgroundAudioUrl = backgroundAudioUrl;
+
+  String? _status;
+  String? get status => _$this._status;
+  set status(String? status) => _$this._status = status;
+
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
   set ffRef(DocumentReference<Object?>? ffRef) => _$this._ffRef = ffRef;
@@ -224,6 +291,9 @@ class StoriesRecordBuilder
       _createdDate = $v.createdDate;
       _cover = $v.cover;
       _audio = $v.audio;
+      _isAiLoading = $v.isAiLoading;
+      _backgroundAudioUrl = $v.backgroundAudioUrl;
+      _status = $v.status;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -252,6 +322,9 @@ class StoriesRecordBuilder
             createdDate: createdDate,
             cover: cover,
             audio: audio,
+            isAiLoading: isAiLoading,
+            backgroundAudioUrl: backgroundAudioUrl,
+            status: status,
             ffRef: ffRef);
     replace(_$result);
     return _$result;

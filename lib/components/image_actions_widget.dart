@@ -1,5 +1,6 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../components/image_editor_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
@@ -7,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'image_actions_model.dart';
+export 'image_actions_model.dart';
 
 class ImageActionsWidget extends StatefulWidget {
   const ImageActionsWidget({
@@ -23,6 +26,27 @@ class ImageActionsWidget extends StatefulWidget {
 }
 
 class _ImageActionsWidgetState extends State<ImageActionsWidget> {
+  late ImageActionsModel _model;
+
+  @override
+  void setState(VoidCallback callback) {
+    super.setState(callback);
+    _model.onUpdate();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => ImageActionsModel());
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -46,21 +70,21 @@ class _ImageActionsWidgetState extends State<ImageActionsWidget> {
           children: [
             FFButtonWidget(
               onPressed: () async {
-                await showDialog(
+                await showModalBottomSheet(
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  enableDrag: false,
                   context: context,
-                  builder: (alertDialogContext) {
-                    return AlertDialog(
-                      title: Text('TODO'),
-                      content: Text('TODO'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(alertDialogContext),
-                          child: Text('Ok'),
-                        ),
-                      ],
+                  builder: (context) {
+                    return Padding(
+                      padding: MediaQuery.of(context).viewInsets,
+                      child: ImageEditorWidget(
+                        storyRef: widget.storyRef,
+                        imageDoc: widget.imageDoc,
+                      ),
                     );
                   },
-                );
+                ).then((value) => setState(() {}));
               },
               text: 'Edit',
               options: FFButtonOptions(

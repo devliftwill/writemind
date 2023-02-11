@@ -12,6 +12,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'stories_model.dart';
+export 'stories_model.dart';
 
 class StoriesWidget extends StatefulWidget {
   const StoriesWidget({Key? key}) : super(key: key);
@@ -22,6 +24,11 @@ class StoriesWidget extends StatefulWidget {
 
 class _StoriesWidgetState extends State<StoriesWidget>
     with TickerProviderStateMixin {
+  late StoriesModel _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _unfocusNode = FocusNode();
+
   final animationsMap = {
     'storyOnPageLoadAnimation': AnimationInfo(
       trigger: AnimationTrigger.onPageLoad,
@@ -36,22 +43,20 @@ class _StoriesWidgetState extends State<StoriesWidget>
       ],
     ),
   };
-  StoriesRecord? story;
-  TextEditingController? emailTextFieldController;
-  final _unfocusNode = FocusNode();
-  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    _model = createModel(context, () => StoriesModel());
 
-    emailTextFieldController = TextEditingController();
+    _model.emailTextFieldController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _model.dispose();
+
     _unfocusNode.dispose();
-    emailTextFieldController?.dispose();
     super.dispose();
   }
 
@@ -71,19 +76,19 @@ class _StoriesWidgetState extends State<StoriesWidget>
           );
           var storiesRecordReference = StoriesRecord.collection.doc();
           await storiesRecordReference.set(storiesCreateData);
-          story = StoriesRecord.getDocumentFromData(
+          _model.story = StoriesRecord.getDocumentFromData(
               storiesCreateData, storiesRecordReference);
 
           context.pushNamed(
             'StoryDetails',
             queryParams: {
               'storyDoc': serializeParam(
-                story,
+                _model.story,
                 ParamType.Document,
               ),
             }.withoutNulls,
             extra: <String, dynamic>{
-              'storyDoc': story,
+              'storyDoc': _model.story,
             },
           );
 
@@ -112,7 +117,7 @@ class _StoriesWidgetState extends State<StoriesWidget>
                     children: [
                       Expanded(
                         child: TextFormField(
-                          controller: emailTextFieldController,
+                          controller: _model.emailTextFieldController,
                           textCapitalization: TextCapitalization.sentences,
                           obscureText: false,
                           decoration: InputDecoration(
@@ -157,6 +162,8 @@ class _StoriesWidgetState extends State<StoriesWidget>
                           ),
                           style: FlutterFlowTheme.of(context).bodyText1,
                           keyboardType: TextInputType.name,
+                          validator: _model.emailTextFieldControllerValidator
+                              .asValidator(context),
                         ),
                       ),
                       FlutterFlowIconButton(
@@ -242,7 +249,8 @@ class _StoriesWidgetState extends State<StoriesWidget>
                                   );
                                 },
                                 child: StoryWidget(
-                                  key: Key('Story_${listViewIndex}'),
+                                  key: Key(
+                                      'Key6y3_${listViewIndex}_of_${listViewStoriesRecordList.length}'),
                                   story: listViewStoriesRecord,
                                 ),
                               ).animateOnPageLoad(

@@ -22,6 +22,14 @@ abstract class StoriesRecord
 
   String? get audio;
 
+  @BuiltValueField(wireName: 'is_ai_loading')
+  bool? get isAiLoading;
+
+  @BuiltValueField(wireName: 'background_audio_url')
+  String? get backgroundAudioUrl;
+
+  String? get status;
+
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference? get ffRef;
   DocumentReference get reference => ffRef!;
@@ -29,7 +37,10 @@ abstract class StoriesRecord
   static void _initializeBuilder(StoriesRecordBuilder builder) => builder
     ..title = ''
     ..cover = ''
-    ..audio = '';
+    ..audio = ''
+    ..isAiLoading = false
+    ..backgroundAudioUrl = ''
+    ..status = '';
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('stories');
@@ -58,6 +69,9 @@ Map<String, dynamic> createStoriesRecordData({
   DateTime? createdDate,
   String? cover,
   String? audio,
+  bool? isAiLoading,
+  String? backgroundAudioUrl,
+  String? status,
 }) {
   final firestoreData = serializers.toFirestore(
     StoriesRecord.serializer,
@@ -67,7 +81,10 @@ Map<String, dynamic> createStoriesRecordData({
         ..title = title
         ..createdDate = createdDate
         ..cover = cover
-        ..audio = audio,
+        ..audio = audio
+        ..isAiLoading = isAiLoading
+        ..backgroundAudioUrl = backgroundAudioUrl
+        ..status = status,
     ),
   );
 

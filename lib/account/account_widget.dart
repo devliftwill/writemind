@@ -1,11 +1,15 @@
 import '../auth/auth_util.dart';
+import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'account_model.dart';
+export 'account_model.dart';
 
 class AccountWidget extends StatefulWidget {
   const AccountWidget({Key? key}) : super(key: key);
@@ -15,34 +19,27 @@ class AccountWidget extends StatefulWidget {
 }
 
 class _AccountWidgetState extends State<AccountWidget> {
-  TextEditingController? confirmTextFieldController;
-  late bool confirmTextFieldVisibility;
-  TextEditingController? emailTextFieldController;
-  TextEditingController? nameTextFieldController;
-  TextEditingController? passwordTextFieldController;
-  late bool passwordTextFieldVisibility;
-  final _unfocusNode = FocusNode();
+  late AccountModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final formKey = GlobalKey<FormState>();
+  final _unfocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    confirmTextFieldController = TextEditingController();
-    confirmTextFieldVisibility = false;
-    emailTextFieldController = TextEditingController();
-    nameTextFieldController = TextEditingController();
-    passwordTextFieldController = TextEditingController();
-    passwordTextFieldVisibility = false;
+    _model = createModel(context, () => AccountModel());
+
+    _model.nameTextFieldController =
+        TextEditingController(text: currentUserDisplayName);
+    _model.emailTextFieldController =
+        TextEditingController(text: currentUserEmail);
   }
 
   @override
   void dispose() {
+    _model.dispose();
+
     _unfocusNode.dispose();
-    confirmTextFieldController?.dispose();
-    emailTextFieldController?.dispose();
-    nameTextFieldController?.dispose();
-    passwordTextFieldController?.dispose();
     super.dispose();
   }
 
@@ -109,7 +106,7 @@ class _AccountWidgetState extends State<AccountWidget> {
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         child: Form(
-                          key: formKey,
+                          key: _model.formKey,
                           autovalidateMode: AutovalidateMode.disabled,
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
@@ -118,56 +115,62 @@ class _AccountWidgetState extends State<AccountWidget> {
                               Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                                child: TextFormField(
-                                  controller: nameTextFieldController,
-                                  textCapitalization:
-                                      TextCapitalization.sentences,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    hintText: 'Name',
-                                    hintStyle:
-                                        FlutterFlowTheme.of(context).bodyText2,
-                                    enabledBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
+                                child: AuthUserStreamWidget(
+                                  builder: (context) => TextFormField(
+                                    controller: _model.nameTextFieldController,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      hintText: 'Name',
+                                      hintStyle: FlutterFlowTheme.of(context)
+                                          .bodyText2,
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    errorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
+                                      errorBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    focusedErrorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
+                                      focusedErrorBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      borderRadius: BorderRadius.circular(20),
+                                      filled: true,
+                                      fillColor: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
                                     ),
-                                    filled: true,
-                                    fillColor: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
+                                    style:
+                                        FlutterFlowTheme.of(context).bodyText1,
+                                    keyboardType: TextInputType.name,
+                                    validator: _model
+                                        .nameTextFieldControllerValidator
+                                        .asValidator(context),
                                   ),
-                                  style: FlutterFlowTheme.of(context).bodyText1,
-                                  keyboardType: TextInputType.name,
                                 ),
                               ),
                               Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: TextFormField(
-                                  controller: emailTextFieldController,
+                                  controller: _model.emailTextFieldController,
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     hintText: 'Email',
@@ -207,124 +210,9 @@ class _AccountWidgetState extends State<AccountWidget> {
                                   ),
                                   style: FlutterFlowTheme.of(context).bodyText1,
                                   keyboardType: TextInputType.emailAddress,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                                child: TextFormField(
-                                  controller: passwordTextFieldController,
-                                  obscureText: !passwordTextFieldVisibility,
-                                  decoration: InputDecoration(
-                                    hintText: 'Password',
-                                    hintStyle:
-                                        FlutterFlowTheme.of(context).bodyText2,
-                                    enabledBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    errorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    focusedErrorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    filled: true,
-                                    fillColor: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                    suffixIcon: InkWell(
-                                      onTap: () => setState(
-                                        () => passwordTextFieldVisibility =
-                                            !passwordTextFieldVisibility,
-                                      ),
-                                      focusNode: FocusNode(skipTraversal: true),
-                                      child: Icon(
-                                        passwordTextFieldVisibility
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: Color(0xFF757575),
-                                        size: 22,
-                                      ),
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.of(context).bodyText1,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                                child: TextFormField(
-                                  controller: confirmTextFieldController,
-                                  obscureText: !confirmTextFieldVisibility,
-                                  decoration: InputDecoration(
-                                    hintText: 'Repeat Password',
-                                    hintStyle:
-                                        FlutterFlowTheme.of(context).bodyText2,
-                                    enabledBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    errorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    focusedErrorBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    filled: true,
-                                    fillColor: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                    suffixIcon: InkWell(
-                                      onTap: () => setState(
-                                        () => confirmTextFieldVisibility =
-                                            !confirmTextFieldVisibility,
-                                      ),
-                                      focusNode: FocusNode(skipTraversal: true),
-                                      child: Icon(
-                                        confirmTextFieldVisibility
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: Color(0xFF757575),
-                                        size: 22,
-                                      ),
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.of(context).bodyText1,
+                                  validator: _model
+                                      .emailTextFieldControllerValidator
+                                      .asValidator(context),
                                 ),
                               ),
                               Padding(
@@ -332,10 +220,21 @@ class _AccountWidgetState extends State<AccountWidget> {
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: FFButtonWidget(
                                   onPressed: () async {
-                                    if (formKey.currentState == null ||
-                                        !formKey.currentState!.validate()) {
+                                    if (_model.formKey.currentState == null ||
+                                        !_model.formKey.currentState!
+                                            .validate()) {
                                       return;
                                     }
+
+                                    final usersUpdateData =
+                                        createUsersRecordData(
+                                      email:
+                                          _model.emailTextFieldController.text,
+                                      displayName:
+                                          _model.nameTextFieldController.text,
+                                    );
+                                    await currentUserReference!
+                                        .update(usersUpdateData);
                                   },
                                   text: 'Update',
                                   options: FFButtonOptions(
@@ -393,8 +292,40 @@ class _AccountWidgetState extends State<AccountWidget> {
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: FFButtonWidget(
-                                  onPressed: () {
-                                    print('Button pressed ...');
+                                  onPressed: () async {
+                                    var confirmDialogResponse =
+                                        await showDialog<bool>(
+                                              context: context,
+                                              builder: (alertDialogContext) {
+                                                return AlertDialog(
+                                                  title: Text('Are you sure?'),
+                                                  content: Text(
+                                                      'All of your data will be lost'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              alertDialogContext,
+                                                              false),
+                                                      child: Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              alertDialogContext,
+                                                              true),
+                                                      child: Text('Confirm'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            ) ??
+                                            false;
+                                    if (confirmDialogResponse) {
+                                      await deleteUser(context);
+                                    }
+
+                                    context.goNamedAuth('Stories', mounted);
                                   },
                                   text: 'Delete Account',
                                   options: FFButtonOptions(

@@ -3,6 +3,8 @@ import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'playground_model.dart';
+export 'playground_model.dart';
 
 class PlaygroundWidget extends StatefulWidget {
   const PlaygroundWidget({Key? key}) : super(key: key);
@@ -12,19 +14,23 @@ class PlaygroundWidget extends StatefulWidget {
 }
 
 class _PlaygroundWidgetState extends State<PlaygroundWidget> {
-  double? sliderValue;
-  final _unfocusNode = FocusNode();
+  late PlaygroundModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _unfocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    _model = createModel(context, () => PlaygroundModel());
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
+    _model.dispose();
+
     _unfocusNode.dispose();
     super.dispose();
   }
@@ -56,10 +62,10 @@ class _PlaygroundWidgetState extends State<PlaygroundWidget> {
                       inactiveColor: Color(0xFF9E9E9E),
                       min: 0,
                       max: 10,
-                      value: sliderValue ??= 0,
+                      value: _model.sliderValue ??= 0,
                       onChanged: (newValue) {
                         newValue = double.parse(newValue.toStringAsFixed(6));
-                        setState(() => sliderValue = newValue);
+                        setState(() => _model.sliderValue = newValue);
                       },
                     ),
                   ),

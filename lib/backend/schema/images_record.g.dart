@@ -41,18 +41,18 @@ class _$ImagesRecordSerializer implements StructuredSerializer<ImagesRecord> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(DateTime)));
     }
-    value = object.startTime;
-    if (value != null) {
-      result
-        ..add('start_time')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(double)));
-    }
     value = object.seconds;
     if (value != null) {
       result
         ..add('seconds')
         ..add(serializers.serialize(value, specifiedType: const FullType(int)));
+    }
+    value = object.mask;
+    if (value != null) {
+      result
+        ..add('mask')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
     }
     value = object.ffRef;
     if (value != null) {
@@ -89,13 +89,13 @@ class _$ImagesRecordSerializer implements StructuredSerializer<ImagesRecord> {
           result.createdDate = serializers.deserialize(value,
               specifiedType: const FullType(DateTime)) as DateTime?;
           break;
-        case 'start_time':
-          result.startTime = serializers.deserialize(value,
-              specifiedType: const FullType(double)) as double?;
-          break;
         case 'seconds':
           result.seconds = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int?;
+          break;
+        case 'mask':
+          result.mask = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
@@ -118,9 +118,9 @@ class _$ImagesRecord extends ImagesRecord {
   @override
   final DateTime? createdDate;
   @override
-  final double? startTime;
-  @override
   final int? seconds;
+  @override
+  final String? mask;
   @override
   final DocumentReference<Object?>? ffRef;
 
@@ -131,8 +131,8 @@ class _$ImagesRecord extends ImagesRecord {
       {this.imageUrl,
       this.text,
       this.createdDate,
-      this.startTime,
       this.seconds,
+      this.mask,
       this.ffRef})
       : super._();
 
@@ -150,8 +150,8 @@ class _$ImagesRecord extends ImagesRecord {
         imageUrl == other.imageUrl &&
         text == other.text &&
         createdDate == other.createdDate &&
-        startTime == other.startTime &&
         seconds == other.seconds &&
+        mask == other.mask &&
         ffRef == other.ffRef;
   }
 
@@ -162,8 +162,8 @@ class _$ImagesRecord extends ImagesRecord {
             $jc(
                 $jc($jc($jc(0, imageUrl.hashCode), text.hashCode),
                     createdDate.hashCode),
-                startTime.hashCode),
-            seconds.hashCode),
+                seconds.hashCode),
+            mask.hashCode),
         ffRef.hashCode));
   }
 
@@ -173,8 +173,8 @@ class _$ImagesRecord extends ImagesRecord {
           ..add('imageUrl', imageUrl)
           ..add('text', text)
           ..add('createdDate', createdDate)
-          ..add('startTime', startTime)
           ..add('seconds', seconds)
+          ..add('mask', mask)
           ..add('ffRef', ffRef))
         .toString();
   }
@@ -196,13 +196,13 @@ class ImagesRecordBuilder
   DateTime? get createdDate => _$this._createdDate;
   set createdDate(DateTime? createdDate) => _$this._createdDate = createdDate;
 
-  double? _startTime;
-  double? get startTime => _$this._startTime;
-  set startTime(double? startTime) => _$this._startTime = startTime;
-
   int? _seconds;
   int? get seconds => _$this._seconds;
   set seconds(int? seconds) => _$this._seconds = seconds;
+
+  String? _mask;
+  String? get mask => _$this._mask;
+  set mask(String? mask) => _$this._mask = mask;
 
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
@@ -218,8 +218,8 @@ class ImagesRecordBuilder
       _imageUrl = $v.imageUrl;
       _text = $v.text;
       _createdDate = $v.createdDate;
-      _startTime = $v.startTime;
       _seconds = $v.seconds;
+      _mask = $v.mask;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -246,8 +246,8 @@ class ImagesRecordBuilder
             imageUrl: imageUrl,
             text: text,
             createdDate: createdDate,
-            startTime: startTime,
             seconds: seconds,
+            mask: mask,
             ffRef: ffRef);
     replace(_$result);
     return _$result;

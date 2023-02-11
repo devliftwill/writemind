@@ -57,6 +57,34 @@ class _$MessagesRecordSerializer
         ..add(
             serializers.serialize(value, specifiedType: const FullType(bool)));
     }
+    value = object.languageCode;
+    if (value != null) {
+      result
+        ..add('language_code')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.ssmlGender;
+    if (value != null) {
+      result
+        ..add('ssml_gender')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.generateBackgroundMusic;
+    if (value != null) {
+      result
+        ..add('generate_background_music')
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(bool)));
+    }
+    value = object.backgroundMusicPrompt;
+    if (value != null) {
+      result
+        ..add('background_music_prompt')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
     value = object.ffRef;
     if (value != null) {
       result
@@ -102,6 +130,22 @@ class _$MessagesRecordSerializer
           result.isAi = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool?;
           break;
+        case 'language_code':
+          result.languageCode = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'ssml_gender':
+          result.ssmlGender = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'generate_background_music':
+          result.generateBackgroundMusic = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool?;
+          break;
+        case 'background_music_prompt':
+          result.backgroundMusicPrompt = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
               specifiedType: const FullType(DocumentReference, const [
@@ -127,6 +171,14 @@ class _$MessagesRecord extends MessagesRecord {
   @override
   final bool? isAi;
   @override
+  final String? languageCode;
+  @override
+  final String? ssmlGender;
+  @override
+  final bool? generateBackgroundMusic;
+  @override
+  final String? backgroundMusicPrompt;
+  @override
   final DocumentReference<Object?>? ffRef;
 
   factory _$MessagesRecord([void Function(MessagesRecordBuilder)? updates]) =>
@@ -138,6 +190,10 @@ class _$MessagesRecord extends MessagesRecord {
       this.senderRef,
       this.convertToAudio,
       this.isAi,
+      this.languageCode,
+      this.ssmlGender,
+      this.generateBackgroundMusic,
+      this.backgroundMusicPrompt,
       this.ffRef})
       : super._();
 
@@ -158,6 +214,10 @@ class _$MessagesRecord extends MessagesRecord {
         senderRef == other.senderRef &&
         convertToAudio == other.convertToAudio &&
         isAi == other.isAi &&
+        languageCode == other.languageCode &&
+        ssmlGender == other.ssmlGender &&
+        generateBackgroundMusic == other.generateBackgroundMusic &&
+        backgroundMusicPrompt == other.backgroundMusicPrompt &&
         ffRef == other.ffRef;
   }
 
@@ -166,10 +226,20 @@ class _$MessagesRecord extends MessagesRecord {
     return $jf($jc(
         $jc(
             $jc(
-                $jc($jc($jc(0, text.hashCode), createdDate.hashCode),
-                    senderRef.hashCode),
-                convertToAudio.hashCode),
-            isAi.hashCode),
+                $jc(
+                    $jc(
+                        $jc(
+                            $jc(
+                                $jc(
+                                    $jc($jc(0, text.hashCode),
+                                        createdDate.hashCode),
+                                    senderRef.hashCode),
+                                convertToAudio.hashCode),
+                            isAi.hashCode),
+                        languageCode.hashCode),
+                    ssmlGender.hashCode),
+                generateBackgroundMusic.hashCode),
+            backgroundMusicPrompt.hashCode),
         ffRef.hashCode));
   }
 
@@ -181,6 +251,10 @@ class _$MessagesRecord extends MessagesRecord {
           ..add('senderRef', senderRef)
           ..add('convertToAudio', convertToAudio)
           ..add('isAi', isAi)
+          ..add('languageCode', languageCode)
+          ..add('ssmlGender', ssmlGender)
+          ..add('generateBackgroundMusic', generateBackgroundMusic)
+          ..add('backgroundMusicPrompt', backgroundMusicPrompt)
           ..add('ffRef', ffRef))
         .toString();
   }
@@ -212,6 +286,24 @@ class MessagesRecordBuilder
   bool? get isAi => _$this._isAi;
   set isAi(bool? isAi) => _$this._isAi = isAi;
 
+  String? _languageCode;
+  String? get languageCode => _$this._languageCode;
+  set languageCode(String? languageCode) => _$this._languageCode = languageCode;
+
+  String? _ssmlGender;
+  String? get ssmlGender => _$this._ssmlGender;
+  set ssmlGender(String? ssmlGender) => _$this._ssmlGender = ssmlGender;
+
+  bool? _generateBackgroundMusic;
+  bool? get generateBackgroundMusic => _$this._generateBackgroundMusic;
+  set generateBackgroundMusic(bool? generateBackgroundMusic) =>
+      _$this._generateBackgroundMusic = generateBackgroundMusic;
+
+  String? _backgroundMusicPrompt;
+  String? get backgroundMusicPrompt => _$this._backgroundMusicPrompt;
+  set backgroundMusicPrompt(String? backgroundMusicPrompt) =>
+      _$this._backgroundMusicPrompt = backgroundMusicPrompt;
+
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
   set ffRef(DocumentReference<Object?>? ffRef) => _$this._ffRef = ffRef;
@@ -228,6 +320,10 @@ class MessagesRecordBuilder
       _senderRef = $v.senderRef;
       _convertToAudio = $v.convertToAudio;
       _isAi = $v.isAi;
+      _languageCode = $v.languageCode;
+      _ssmlGender = $v.ssmlGender;
+      _generateBackgroundMusic = $v.generateBackgroundMusic;
+      _backgroundMusicPrompt = $v.backgroundMusicPrompt;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -256,6 +352,10 @@ class MessagesRecordBuilder
             senderRef: senderRef,
             convertToAudio: convertToAudio,
             isAi: isAi,
+            languageCode: languageCode,
+            ssmlGender: ssmlGender,
+            generateBackgroundMusic: generateBackgroundMusic,
+            backgroundMusicPrompt: backgroundMusicPrompt,
             ffRef: ffRef);
     replace(_$result);
     return _$result;

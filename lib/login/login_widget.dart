@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'login_model.dart';
+export 'login_model.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -15,26 +17,25 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
-  TextEditingController? emailTextFieldController;
-  TextEditingController? passwordTextFieldController;
-  late bool passwordTextFieldVisibility;
-  final _unfocusNode = FocusNode();
+  late LoginModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final formKey = GlobalKey<FormState>();
+  final _unfocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    emailTextFieldController = TextEditingController();
-    passwordTextFieldController = TextEditingController();
-    passwordTextFieldVisibility = false;
+    _model = createModel(context, () => LoginModel());
+
+    _model.emailTextFieldController = TextEditingController();
+    _model.passwordTextFieldController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _model.dispose();
+
     _unfocusNode.dispose();
-    emailTextFieldController?.dispose();
-    passwordTextFieldController?.dispose();
     super.dispose();
   }
 
@@ -74,7 +75,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         child: Form(
-                          key: formKey,
+                          key: _model.formKey,
                           autovalidateMode: AutovalidateMode.disabled,
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
@@ -84,7 +85,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: TextFormField(
-                                  controller: emailTextFieldController,
+                                  controller: _model.emailTextFieldController,
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     hintText: 'Email',
@@ -124,25 +125,19 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ),
                                   style: FlutterFlowTheme.of(context).bodyText1,
                                   keyboardType: TextInputType.emailAddress,
-                                  validator: (val) {
-                                    if (val == null || val.isEmpty) {
-                                      return 'Field is required';
-                                    }
-
-                                    if (!RegExp(kTextValidatorEmailRegex)
-                                        .hasMatch(val)) {
-                                      return 'Email is invalid';
-                                    }
-                                    return null;
-                                  },
+                                  validator: _model
+                                      .emailTextFieldControllerValidator
+                                      .asValidator(context),
                                 ),
                               ),
                               Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: TextFormField(
-                                  controller: passwordTextFieldController,
-                                  obscureText: !passwordTextFieldVisibility,
+                                  controller:
+                                      _model.passwordTextFieldController,
+                                  obscureText:
+                                      !_model.passwordTextFieldVisibility,
                                   decoration: InputDecoration(
                                     hintText: 'Password',
                                     hintStyle:
@@ -180,12 +175,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                                         .secondaryBackground,
                                     suffixIcon: InkWell(
                                       onTap: () => setState(
-                                        () => passwordTextFieldVisibility =
-                                            !passwordTextFieldVisibility,
+                                        () => _model
+                                                .passwordTextFieldVisibility =
+                                            !_model.passwordTextFieldVisibility,
                                       ),
                                       focusNode: FocusNode(skipTraversal: true),
                                       child: Icon(
-                                        passwordTextFieldVisibility
+                                        _model.passwordTextFieldVisibility
                                             ? Icons.visibility_outlined
                                             : Icons.visibility_off_outlined,
                                         color: Color(0xFF757575),
@@ -194,13 +190,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     ),
                                   ),
                                   style: FlutterFlowTheme.of(context).bodyText1,
-                                  validator: (val) {
-                                    if (val == null || val.isEmpty) {
-                                      return 'Field is required';
-                                    }
-
-                                    return null;
-                                  },
+                                  validator: _model
+                                      .passwordTextFieldControllerValidator
+                                      .asValidator(context),
                                 ),
                               ),
                               Row(
@@ -264,17 +256,17 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: FFButtonWidget(
                                   onPressed: () async {
-                                    if (formKey.currentState == null ||
-                                        !formKey.currentState!.validate()) {
+                                    if (_model.formKey.currentState == null ||
+                                        !_model.formKey.currentState!
+                                            .validate()) {
                                       return;
                                     }
-
                                     GoRouter.of(context).prepareAuthEvent();
 
                                     final user = await signInWithEmail(
                                       context,
-                                      emailTextFieldController!.text,
-                                      passwordTextFieldController!.text,
+                                      _model.emailTextFieldController.text,
+                                      _model.passwordTextFieldController.text,
                                     );
                                     if (user == null) {
                                       return;

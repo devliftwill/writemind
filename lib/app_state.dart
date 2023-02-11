@@ -30,6 +30,12 @@ class FFAppState extends ChangeNotifier {
   set selectedImage(String _value) {
     _selectedImage = _value;
   }
+
+  int _currentAudioPosition = 0;
+  int get currentAudioPosition => _currentAudioPosition;
+  set currentAudioPosition(int _value) {
+    _currentAudioPosition = _value;
+  }
 }
 
 LatLng? _latLngFromString(String? val) {

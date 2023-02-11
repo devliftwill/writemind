@@ -6,6 +6,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart'
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'onboaring_model.dart';
+export 'onboaring_model.dart';
 
 class OnboaringWidget extends StatefulWidget {
   const OnboaringWidget({Key? key}) : super(key: key);
@@ -15,12 +17,21 @@ class OnboaringWidget extends StatefulWidget {
 }
 
 class _OnboaringWidgetState extends State<OnboaringWidget> {
-  PageController? pageViewController;
-  final _unfocusNode = FocusNode();
+  late OnboaringModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _unfocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => OnboaringModel());
+  }
 
   @override
   void dispose() {
+    _model.dispose();
+
     _unfocusNode.dispose();
     super.dispose();
   }
@@ -52,7 +63,7 @@ class _OnboaringWidgetState extends State<OnboaringWidget> {
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(0, 0, 0, 50),
                             child: PageView(
-                              controller: pageViewController ??=
+                              controller: _model.pageViewController ??=
                                   PageController(initialPage: 0),
                               scrollDirection: Axis.horizontal,
                               children: [
@@ -149,12 +160,12 @@ class _OnboaringWidgetState extends State<OnboaringWidget> {
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
                               child: smooth_page_indicator.SmoothPageIndicator(
-                                controller: pageViewController ??=
+                                controller: _model.pageViewController ??=
                                     PageController(initialPage: 0),
                                 count: 3,
                                 axisDirection: Axis.horizontal,
                                 onDotClicked: (i) {
-                                  pageViewController!.animateToPage(
+                                  _model.pageViewController!.animateToPage(
                                     i,
                                     duration: Duration(milliseconds: 500),
                                     curve: Curves.ease,

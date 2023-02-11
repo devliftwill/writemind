@@ -19,6 +19,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'story_details_model.dart';
+export 'story_details_model.dart';
 
 class StoryDetailsWidget extends StatefulWidget {
   const StoryDetailsWidget({
@@ -34,6 +36,11 @@ class StoryDetailsWidget extends StatefulWidget {
 
 class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
     with TickerProviderStateMixin {
+  late StoryDetailsModel _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _unfocusNode = FocusNode();
+
   final animationsMap = {
     'imageOnPageLoadAnimation': AnimationInfo(
       trigger: AnimationTrigger.onPageLoad,
@@ -48,13 +55,11 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
       ],
     ),
   };
-  TextEditingController? textController;
-  final _unfocusNode = FocusNode();
-  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    _model = createModel(context, () => StoryDetailsModel());
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
@@ -68,8 +73,9 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
 
   @override
   void dispose() {
+    _model.dispose();
+
     _unfocusNode.dispose();
-    textController?.dispose();
     super.dispose();
   }
 
@@ -265,6 +271,11 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
                                                     images:
                                                         containerImagesRecordList
                                                             .toList(),
+                                                    currentPosition: FFAppState()
+                                                        .currentAudioPosition,
+                                                    backgroundAudio: widget
+                                                        .storyDoc!
+                                                        .backgroundAudioUrl,
                                                     onDurationChanged:
                                                         () async {
                                                       FFAppState().update(() {
@@ -272,6 +283,10 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
                                                                 .selectedImage =
                                                             FFAppState()
                                                                 .selectedImage;
+                                                        FFAppState()
+                                                                .currentAudioPosition =
+                                                            FFAppState()
+                                                                .currentAudioPosition;
                                                       });
                                                     },
                                                   ),
@@ -295,17 +310,17 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
                                 Expanded(
                                   flex: 2,
                                   child: TextFormField(
-                                    controller: textController ??=
+                                    controller: _model.textController ??=
                                         TextEditingController(
                                       text: containerStoriesRecord.title,
                                     ),
                                     onChanged: (_) => EasyDebounce.debounce(
-                                      'textController',
+                                      '_model.textController',
                                       Duration(milliseconds: 2000),
                                       () async {
                                         final storiesUpdateData =
                                             createStoriesRecordData(
-                                          title: textController?.text ?? '',
+                                          title: _model.textController.text,
                                         );
                                         await widget.storyDoc!.reference
                                             .update(storiesUpdateData);
@@ -359,6 +374,8 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
                                     ),
                                     style:
                                         FlutterFlowTheme.of(context).bodyText1,
+                                    validator: _model.textControllerValidator
+                                        .asValidator(context),
                                   ),
                                 ),
                                 Expanded(
@@ -519,6 +536,10 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget>
                                                                     .selectedImage =
                                                                 imagesItem
                                                                     .imageUrl!;
+                                                            FFAppState()
+                                                                    .currentAudioPosition =
+                                                                imagesItem
+                                                                    .seconds!;
                                                           });
                                                         },
                                                         child: Container(

@@ -9,6 +9,9 @@ import 'schema/users_record.dart';
 import 'schema/stories_record.dart';
 import 'schema/messages_record.dart';
 import 'schema/images_record.dart';
+import 'schema/video_exports_record.dart';
+import 'schema/audio_queue_record.dart';
+import 'schema/background_audio_record.dart';
 import 'schema/serializers.dart';
 
 export 'dart:async' show StreamSubscription;
@@ -20,6 +23,9 @@ export 'schema/users_record.dart';
 export 'schema/stories_record.dart';
 export 'schema/messages_record.dart';
 export 'schema/images_record.dart';
+export 'schema/video_exports_record.dart';
+export 'schema/audio_queue_record.dart';
+export 'schema/background_audio_record.dart';
 
 /// Functions to query UsersRecords (as a Stream and as a Future).
 Future<int> queryUsersRecordCount({
@@ -231,6 +237,162 @@ Future<FFFirestorePage<ImagesRecord>> queryImagesRecordPage({
     queryCollectionPage(
       ImagesRecord.collection(parent),
       ImagesRecord.serializer,
+      queryBuilder: queryBuilder,
+      nextPageMarker: nextPageMarker,
+      pageSize: pageSize,
+      isStream: isStream,
+    );
+
+/// Functions to query VideoExportsRecords (as a Stream and as a Future).
+Future<int> queryVideoExportsRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      VideoExportsRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<VideoExportsRecord>> queryVideoExportsRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      VideoExportsRecord.collection,
+      VideoExportsRecord.serializer,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<VideoExportsRecord>> queryVideoExportsRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      VideoExportsRecord.collection,
+      VideoExportsRecord.serializer,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<FFFirestorePage<VideoExportsRecord>> queryVideoExportsRecordPage({
+  Query Function(Query)? queryBuilder,
+  DocumentSnapshot? nextPageMarker,
+  required int pageSize,
+  required bool isStream,
+}) =>
+    queryCollectionPage(
+      VideoExportsRecord.collection,
+      VideoExportsRecord.serializer,
+      queryBuilder: queryBuilder,
+      nextPageMarker: nextPageMarker,
+      pageSize: pageSize,
+      isStream: isStream,
+    );
+
+/// Functions to query AudioQueueRecords (as a Stream and as a Future).
+Future<int> queryAudioQueueRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      AudioQueueRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<AudioQueueRecord>> queryAudioQueueRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      AudioQueueRecord.collection,
+      AudioQueueRecord.serializer,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<AudioQueueRecord>> queryAudioQueueRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      AudioQueueRecord.collection,
+      AudioQueueRecord.serializer,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<FFFirestorePage<AudioQueueRecord>> queryAudioQueueRecordPage({
+  Query Function(Query)? queryBuilder,
+  DocumentSnapshot? nextPageMarker,
+  required int pageSize,
+  required bool isStream,
+}) =>
+    queryCollectionPage(
+      AudioQueueRecord.collection,
+      AudioQueueRecord.serializer,
+      queryBuilder: queryBuilder,
+      nextPageMarker: nextPageMarker,
+      pageSize: pageSize,
+      isStream: isStream,
+    );
+
+/// Functions to query BackgroundAudioRecords (as a Stream and as a Future).
+Future<int> queryBackgroundAudioRecordCount({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      BackgroundAudioRecord.collection,
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<BackgroundAudioRecord>> queryBackgroundAudioRecord({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      BackgroundAudioRecord.collection,
+      BackgroundAudioRecord.serializer,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<BackgroundAudioRecord>> queryBackgroundAudioRecordOnce({
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      BackgroundAudioRecord.collection,
+      BackgroundAudioRecord.serializer,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<FFFirestorePage<BackgroundAudioRecord>> queryBackgroundAudioRecordPage({
+  Query Function(Query)? queryBuilder,
+  DocumentSnapshot? nextPageMarker,
+  required int pageSize,
+  required bool isStream,
+}) =>
+    queryCollectionPage(
+      BackgroundAudioRecord.collection,
+      BackgroundAudioRecord.serializer,
       queryBuilder: queryBuilder,
       nextPageMarker: nextPageMarker,
       pageSize: pageSize,

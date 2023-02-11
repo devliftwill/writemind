@@ -10,26 +10,31 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class AudioPayerExtended extends StatefulWidget {
-  const AudioPayerExtended({
-    Key? key,
-    this.width,
-    this.height,
-    required this.audio,
-    this.onDurationChanged,
-    required this.images,
-  }) : super(key: key);
+  const AudioPayerExtended(
+      {Key? key,
+      this.width,
+      this.height,
+      required this.audio,
+      this.backgroundAudio,
+      this.onDurationChanged,
+      required this.images,
+      this.currentPosition})
+      : super(key: key);
 
   final double? width;
   final double? height;
   final String audio;
+  final String? backgroundAudio;
   final Future<dynamic> Function()? onDurationChanged;
   final List<ImagesRecord> images;
+  final int? currentPosition;
   @override
   _AudioPayerExtendedState createState() => _AudioPayerExtendedState();
 }
 
 class _AudioPayerExtendedState extends State<AudioPayerExtended> {
   AudioPlayer player = AudioPlayer();
+  AudioPlayer backgroundPlayer = AudioPlayer();
   int maxduration = 100;
   int currentpos = 0;
   String currentpostlabel = "00:00:00";
@@ -41,6 +46,19 @@ class _AudioPayerExtendedState extends State<AudioPayerExtended> {
   void initState() {
     Future.delayed(Duration.zero, () async {
       await player.setSourceUrl(widget.audio);
+
+      if (widget.backgroundAudio != null) {
+        await backgroundPlayer.setSourceUrl(widget.backgroundAudio as String);
+      }
+
+      if (widget.currentPosition != null) {
+        if (widget.backgroundAudio != null) {
+          backgroundPlayer
+              .seek(Duration(seconds: widget.currentPosition as int));
+        }
+        player.seek(Duration(seconds: widget.currentPosition as int));
+      }
+
       player.onDurationChanged.listen((Duration d) {
         setState(() {
           maxduration = d.inMilliseconds;
@@ -61,8 +79,9 @@ class _AudioPayerExtendedState extends State<AudioPayerExtended> {
         if (image.isNotEmpty) {
           FFAppState().selectedImage = image.first.imageUrl as String;
           print(image.first.imageUrl);
-          widget.onDurationChanged!.call();
         }
+        FFAppState().currentAudioPosition = seconds;
+        widget.onDurationChanged!.call();
       });
     });
     super.initState();
@@ -79,6 +98,10 @@ class _AudioPayerExtendedState extends State<AudioPayerExtended> {
               ? InkWell(
                   onTap: () {
                     player.resume();
+                    if (widget.backgroundAudio != null) {
+                      backgroundPlayer.setVolume(0.2);
+                      backgroundPlayer.resume();
+                    }
                     setState(() {
                       isplaying = !isplaying;
                     });
@@ -90,6 +113,9 @@ class _AudioPayerExtendedState extends State<AudioPayerExtended> {
                   ))
               : InkWell(
                   onTap: () {
+                    if (widget.backgroundAudio != null) {
+                      backgroundPlayer.pause();
+                    }
                     player.pause();
                     setState(() {
                       isplaying = !isplaying;
@@ -112,6 +138,9 @@ class _AudioPayerExtendedState extends State<AudioPayerExtended> {
               onChanged: (double value) async {
                 int seekval = value.round();
                 player.seek(Duration(milliseconds: seekval));
+                if (widget.backgroundAudio != null) {
+                  backgroundPlayer.seek(Duration(milliseconds: seekval));
+                }
               },
             ),
           ),

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'register_model.dart';
+export 'register_model.dart';
 
 class RegisterWidget extends StatefulWidget {
   const RegisterWidget({Key? key}) : super(key: key);
@@ -16,34 +18,27 @@ class RegisterWidget extends StatefulWidget {
 }
 
 class _RegisterWidgetState extends State<RegisterWidget> {
-  TextEditingController? confirmTextFieldController;
-  late bool confirmTextFieldVisibility;
-  TextEditingController? emailTextFieldController;
-  TextEditingController? nameTextFieldController;
-  TextEditingController? passwordTextFieldController;
-  late bool passwordTextFieldVisibility;
-  final _unfocusNode = FocusNode();
+  late RegisterModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final formKey = GlobalKey<FormState>();
+  final _unfocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    confirmTextFieldController = TextEditingController();
-    confirmTextFieldVisibility = false;
-    emailTextFieldController = TextEditingController();
-    nameTextFieldController = TextEditingController();
-    passwordTextFieldController = TextEditingController();
-    passwordTextFieldVisibility = false;
+    _model = createModel(context, () => RegisterModel());
+
+    _model.nameTextFieldController = TextEditingController();
+    _model.emailTextFieldController = TextEditingController();
+    _model.passwordTextFieldController = TextEditingController();
+    _model.confirmTextFieldController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _model.dispose();
+
     _unfocusNode.dispose();
-    confirmTextFieldController?.dispose();
-    emailTextFieldController?.dispose();
-    nameTextFieldController?.dispose();
-    passwordTextFieldController?.dispose();
     super.dispose();
   }
 
@@ -83,7 +78,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         child: Form(
-                          key: formKey,
+                          key: _model.formKey,
                           autovalidateMode: AutovalidateMode.disabled,
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
@@ -93,7 +88,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: TextFormField(
-                                  controller: nameTextFieldController,
+                                  controller: _model.nameTextFieldController,
                                   textCapitalization:
                                       TextCapitalization.sentences,
                                   obscureText: false,
@@ -135,20 +130,16 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   ),
                                   style: FlutterFlowTheme.of(context).bodyText1,
                                   keyboardType: TextInputType.name,
-                                  validator: (val) {
-                                    if (val == null || val.isEmpty) {
-                                      return 'Field is required';
-                                    }
-
-                                    return null;
-                                  },
+                                  validator: _model
+                                      .nameTextFieldControllerValidator
+                                      .asValidator(context),
                                 ),
                               ),
                               Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: TextFormField(
-                                  controller: emailTextFieldController,
+                                  controller: _model.emailTextFieldController,
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     hintText: 'Email',
@@ -188,25 +179,19 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   ),
                                   style: FlutterFlowTheme.of(context).bodyText1,
                                   keyboardType: TextInputType.emailAddress,
-                                  validator: (val) {
-                                    if (val == null || val.isEmpty) {
-                                      return 'Field is required';
-                                    }
-
-                                    if (!RegExp(kTextValidatorEmailRegex)
-                                        .hasMatch(val)) {
-                                      return 'Email is invalid';
-                                    }
-                                    return null;
-                                  },
+                                  validator: _model
+                                      .emailTextFieldControllerValidator
+                                      .asValidator(context),
                                 ),
                               ),
                               Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: TextFormField(
-                                  controller: passwordTextFieldController,
-                                  obscureText: !passwordTextFieldVisibility,
+                                  controller:
+                                      _model.passwordTextFieldController,
+                                  obscureText:
+                                      !_model.passwordTextFieldVisibility,
                                   decoration: InputDecoration(
                                     hintText: 'Password',
                                     hintStyle:
@@ -244,12 +229,13 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                         .secondaryBackground,
                                     suffixIcon: InkWell(
                                       onTap: () => setState(
-                                        () => passwordTextFieldVisibility =
-                                            !passwordTextFieldVisibility,
+                                        () => _model
+                                                .passwordTextFieldVisibility =
+                                            !_model.passwordTextFieldVisibility,
                                       ),
                                       focusNode: FocusNode(skipTraversal: true),
                                       child: Icon(
-                                        passwordTextFieldVisibility
+                                        _model.passwordTextFieldVisibility
                                             ? Icons.visibility_outlined
                                             : Icons.visibility_off_outlined,
                                         color: Color(0xFF757575),
@@ -258,21 +244,18 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                     ),
                                   ),
                                   style: FlutterFlowTheme.of(context).bodyText1,
-                                  validator: (val) {
-                                    if (val == null || val.isEmpty) {
-                                      return 'Field is required';
-                                    }
-
-                                    return null;
-                                  },
+                                  validator: _model
+                                      .passwordTextFieldControllerValidator
+                                      .asValidator(context),
                                 ),
                               ),
                               Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: TextFormField(
-                                  controller: confirmTextFieldController,
-                                  obscureText: !confirmTextFieldVisibility,
+                                  controller: _model.confirmTextFieldController,
+                                  obscureText:
+                                      !_model.confirmTextFieldVisibility,
                                   decoration: InputDecoration(
                                     hintText: 'Repeat Password',
                                     hintStyle:
@@ -310,12 +293,13 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                         .secondaryBackground,
                                     suffixIcon: InkWell(
                                       onTap: () => setState(
-                                        () => confirmTextFieldVisibility =
-                                            !confirmTextFieldVisibility,
+                                        () => _model
+                                                .confirmTextFieldVisibility =
+                                            !_model.confirmTextFieldVisibility,
                                       ),
                                       focusNode: FocusNode(skipTraversal: true),
                                       child: Icon(
-                                        confirmTextFieldVisibility
+                                        _model.confirmTextFieldVisibility
                                             ? Icons.visibility_outlined
                                             : Icons.visibility_off_outlined,
                                         color: Color(0xFF757575),
@@ -324,13 +308,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                     ),
                                   ),
                                   style: FlutterFlowTheme.of(context).bodyText1,
-                                  validator: (val) {
-                                    if (val == null || val.isEmpty) {
-                                      return 'Field is required';
-                                    }
-
-                                    return null;
-                                  },
+                                  validator: _model
+                                      .confirmTextFieldControllerValidator
+                                      .asValidator(context),
                                 ),
                               ),
                               Row(
@@ -366,14 +346,16 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                     EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                                 child: FFButtonWidget(
                                   onPressed: () async {
-                                    if (formKey.currentState == null ||
-                                        !formKey.currentState!.validate()) {
+                                    if (_model.formKey.currentState == null ||
+                                        !_model.formKey.currentState!
+                                            .validate()) {
                                       return;
                                     }
-
                                     GoRouter.of(context).prepareAuthEvent();
-                                    if (passwordTextFieldController?.text !=
-                                        confirmTextFieldController?.text) {
+                                    if (_model
+                                            .passwordTextFieldController.text !=
+                                        _model
+                                            .confirmTextFieldController.text) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
@@ -387,8 +369,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
                                     final user = await createAccountWithEmail(
                                       context,
-                                      emailTextFieldController!.text,
-                                      passwordTextFieldController!.text,
+                                      _model.emailTextFieldController.text,
+                                      _model.passwordTextFieldController.text,
                                     );
                                     if (user == null) {
                                       return;
@@ -396,9 +378,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
                                     final usersCreateData =
                                         createUsersRecordData(
-                                      email: emailTextFieldController!.text,
+                                      email:
+                                          _model.emailTextFieldController.text,
                                       displayName:
-                                          nameTextFieldController!.text,
+                                          _model.nameTextFieldController.text,
                                     );
                                     await UsersRecord.collection
                                         .doc(user.uid)

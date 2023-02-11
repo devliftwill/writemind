@@ -25,8 +25,29 @@ service cloud.firestore {
     match /stories/{parent}/images/{document} {
       allow create: if get(/databases/$(database)/documents/stories/$(parent)).data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow read: if get(/databases/$(database)/documents/stories/$(parent)).data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
-      allow write: if false;
+      allow write: if get(/databases/$(database)/documents/stories/$(parent)).data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
       allow delete: if get(/databases/$(database)/documents/stories/$(parent)).data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    match /video_exports/{document} {
+      allow create: if request.resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+      allow read: if resource.data.user_ref == /databases/$(database)/documents/users/$(request.auth.uid);
+      allow write: if false;
+      allow delete: if false;
+    }
+
+    match /audio_queue/{document} {
+      allow create: if true;
+      allow read: if true;
+      allow write: if true;
+      allow delete: if true;
+    }
+
+    match /background_audio/{document} {
+      allow create: if true;
+      allow read: if true;
+      allow write: if true;
+      allow delete: if true;
     }
   }
 }

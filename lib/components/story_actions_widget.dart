@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'story_actions_model.dart';
+export 'story_actions_model.dart';
 
 class StoryActionsWidget extends StatefulWidget {
   const StoryActionsWidget({
@@ -20,6 +22,27 @@ class StoryActionsWidget extends StatefulWidget {
 }
 
 class _StoryActionsWidgetState extends State<StoryActionsWidget> {
+  late StoryActionsModel _model;
+
+  @override
+  void setState(VoidCallback callback) {
+    super.setState(callback);
+    _model.onUpdate();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => StoryActionsModel());
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
