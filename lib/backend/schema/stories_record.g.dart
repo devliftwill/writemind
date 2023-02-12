@@ -77,6 +77,34 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.languageCode;
+    if (value != null) {
+      result
+        ..add('language_code')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.ssmlGender;
+    if (value != null) {
+      result
+        ..add('ssml_gender')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.progress;
+    if (value != null) {
+      result
+        ..add('progress')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.text;
+    if (value != null) {
+      result
+        ..add('text')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
     value = object.ffRef;
     if (value != null) {
       result
@@ -134,6 +162,22 @@ class _$StoriesRecordSerializer implements StructuredSerializer<StoriesRecord> {
           result.status = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
           break;
+        case 'language_code':
+          result.languageCode = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'ssml_gender':
+          result.ssmlGender = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'progress':
+          result.progress = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double?;
+          break;
+        case 'text':
+          result.text = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
               specifiedType: const FullType(DocumentReference, const [
@@ -165,6 +209,14 @@ class _$StoriesRecord extends StoriesRecord {
   @override
   final String? status;
   @override
+  final String? languageCode;
+  @override
+  final String? ssmlGender;
+  @override
+  final double? progress;
+  @override
+  final String? text;
+  @override
   final DocumentReference<Object?>? ffRef;
 
   factory _$StoriesRecord([void Function(StoriesRecordBuilder)? updates]) =>
@@ -179,6 +231,10 @@ class _$StoriesRecord extends StoriesRecord {
       this.isAiLoading,
       this.backgroundAudioUrl,
       this.status,
+      this.languageCode,
+      this.ssmlGender,
+      this.progress,
+      this.text,
       this.ffRef})
       : super._();
 
@@ -201,6 +257,10 @@ class _$StoriesRecord extends StoriesRecord {
         isAiLoading == other.isAiLoading &&
         backgroundAudioUrl == other.backgroundAudioUrl &&
         status == other.status &&
+        languageCode == other.languageCode &&
+        ssmlGender == other.ssmlGender &&
+        progress == other.progress &&
+        text == other.text &&
         ffRef == other.ffRef;
   }
 
@@ -212,13 +272,23 @@ class _$StoriesRecord extends StoriesRecord {
                 $jc(
                     $jc(
                         $jc(
-                            $jc($jc($jc(0, userRef.hashCode), title.hashCode),
-                                createdDate.hashCode),
-                            cover.hashCode),
-                        audio.hashCode),
-                    isAiLoading.hashCode),
-                backgroundAudioUrl.hashCode),
-            status.hashCode),
+                            $jc(
+                                $jc(
+                                    $jc(
+                                        $jc(
+                                            $jc(
+                                                $jc($jc(0, userRef.hashCode),
+                                                    title.hashCode),
+                                                createdDate.hashCode),
+                                            cover.hashCode),
+                                        audio.hashCode),
+                                    isAiLoading.hashCode),
+                                backgroundAudioUrl.hashCode),
+                            status.hashCode),
+                        languageCode.hashCode),
+                    ssmlGender.hashCode),
+                progress.hashCode),
+            text.hashCode),
         ffRef.hashCode));
   }
 
@@ -233,6 +303,10 @@ class _$StoriesRecord extends StoriesRecord {
           ..add('isAiLoading', isAiLoading)
           ..add('backgroundAudioUrl', backgroundAudioUrl)
           ..add('status', status)
+          ..add('languageCode', languageCode)
+          ..add('ssmlGender', ssmlGender)
+          ..add('progress', progress)
+          ..add('text', text)
           ..add('ffRef', ffRef))
         .toString();
   }
@@ -275,6 +349,22 @@ class StoriesRecordBuilder
   String? get status => _$this._status;
   set status(String? status) => _$this._status = status;
 
+  String? _languageCode;
+  String? get languageCode => _$this._languageCode;
+  set languageCode(String? languageCode) => _$this._languageCode = languageCode;
+
+  String? _ssmlGender;
+  String? get ssmlGender => _$this._ssmlGender;
+  set ssmlGender(String? ssmlGender) => _$this._ssmlGender = ssmlGender;
+
+  double? _progress;
+  double? get progress => _$this._progress;
+  set progress(double? progress) => _$this._progress = progress;
+
+  String? _text;
+  String? get text => _$this._text;
+  set text(String? text) => _$this._text = text;
+
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
   set ffRef(DocumentReference<Object?>? ffRef) => _$this._ffRef = ffRef;
@@ -294,6 +384,10 @@ class StoriesRecordBuilder
       _isAiLoading = $v.isAiLoading;
       _backgroundAudioUrl = $v.backgroundAudioUrl;
       _status = $v.status;
+      _languageCode = $v.languageCode;
+      _ssmlGender = $v.ssmlGender;
+      _progress = $v.progress;
+      _text = $v.text;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -325,6 +419,10 @@ class StoriesRecordBuilder
             isAiLoading: isAiLoading,
             backgroundAudioUrl: backgroundAudioUrl,
             status: status,
+            languageCode: languageCode,
+            ssmlGender: ssmlGender,
+            progress: progress,
+            text: text,
             ffRef: ffRef);
     replace(_$result);
     return _$result;

@@ -1,6 +1,5 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
-import '../components/chat_widget.dart';
 import '../components/empty_widget.dart';
 import '../components/image_actions_widget.dart';
 import '../components/image_editor_widget.dart';

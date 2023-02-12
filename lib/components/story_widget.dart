@@ -104,9 +104,13 @@ class _StoryWidgetState extends State<StoryWidget> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      widget.story!.title!,
-                      style: FlutterFlowTheme.of(context).subtitle1,
+                    Container(
+                      width: 250,
+                      decoration: BoxDecoration(),
+                      child: Text(
+                        widget.story!.title!,
+                        style: FlutterFlowTheme.of(context).subtitle1,
+                      ),
                     ),
                     InkWell(
                       onTap: () async {

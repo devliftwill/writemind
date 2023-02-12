@@ -30,6 +30,16 @@ abstract class StoriesRecord
 
   String? get status;
 
+  @BuiltValueField(wireName: 'language_code')
+  String? get languageCode;
+
+  @BuiltValueField(wireName: 'ssml_gender')
+  String? get ssmlGender;
+
+  double? get progress;
+
+  String? get text;
+
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference? get ffRef;
   DocumentReference get reference => ffRef!;
@@ -40,7 +50,11 @@ abstract class StoriesRecord
     ..audio = ''
     ..isAiLoading = false
     ..backgroundAudioUrl = ''
-    ..status = '';
+    ..status = ''
+    ..languageCode = ''
+    ..ssmlGender = ''
+    ..progress = 0.0
+    ..text = '';
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('stories');
@@ -72,6 +86,10 @@ Map<String, dynamic> createStoriesRecordData({
   bool? isAiLoading,
   String? backgroundAudioUrl,
   String? status,
+  String? languageCode,
+  String? ssmlGender,
+  double? progress,
+  String? text,
 }) {
   final firestoreData = serializers.toFirestore(
     StoriesRecord.serializer,
@@ -84,7 +102,11 @@ Map<String, dynamic> createStoriesRecordData({
         ..audio = audio
         ..isAiLoading = isAiLoading
         ..backgroundAudioUrl = backgroundAudioUrl
-        ..status = status,
+        ..status = status
+        ..languageCode = languageCode
+        ..ssmlGender = ssmlGender
+        ..progress = progress
+        ..text = text,
     ),
   );
 

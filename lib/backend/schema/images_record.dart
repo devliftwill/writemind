@@ -22,6 +22,11 @@ abstract class ImagesRecord
 
   String? get mask;
 
+  double? get volume;
+
+  @BuiltValueField(wireName: 'is_cover')
+  bool? get isCover;
+
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference? get ffRef;
   DocumentReference get reference => ffRef!;
@@ -32,7 +37,9 @@ abstract class ImagesRecord
     ..imageUrl = ''
     ..text = ''
     ..seconds = 0
-    ..mask = '';
+    ..mask = ''
+    ..volume = 0.0
+    ..isCover = false;
 
   static Query<Map<String, dynamic>> collection([DocumentReference? parent]) =>
       parent != null
@@ -66,6 +73,8 @@ Map<String, dynamic> createImagesRecordData({
   DateTime? createdDate,
   int? seconds,
   String? mask,
+  double? volume,
+  bool? isCover,
 }) {
   final firestoreData = serializers.toFirestore(
     ImagesRecord.serializer,
@@ -75,7 +84,9 @@ Map<String, dynamic> createImagesRecordData({
         ..text = text
         ..createdDate = createdDate
         ..seconds = seconds
-        ..mask = mask,
+        ..mask = mask
+        ..volume = volume
+        ..isCover = isCover,
     ),
   );
 

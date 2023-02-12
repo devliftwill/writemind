@@ -1,12 +1,12 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../components/empty_widget.dart';
+import '../components/story_editor_widget.dart';
 import '../components/story_widget.dart';
 import '../flutter_flow/flutter_flow_animations.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -69,30 +69,18 @@ class _StoriesWidgetState extends State<StoriesWidget>
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final storiesCreateData = createStoriesRecordData(
-            userRef: currentUserReference,
-            title: 'My Story',
-            createdDate: getCurrentTimestamp,
-          );
-          var storiesRecordReference = StoriesRecord.collection.doc();
-          await storiesRecordReference.set(storiesCreateData);
-          _model.story = StoriesRecord.getDocumentFromData(
-              storiesCreateData, storiesRecordReference);
-
-          context.pushNamed(
-            'StoryDetails',
-            queryParams: {
-              'storyDoc': serializeParam(
-                _model.story,
-                ParamType.Document,
-              ),
-            }.withoutNulls,
-            extra: <String, dynamic>{
-              'storyDoc': _model.story,
+          await showModalBottomSheet(
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            enableDrag: false,
+            context: context,
+            builder: (context) {
+              return Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: StoryEditorWidget(),
+              );
             },
-          );
-
-          setState(() {});
+          ).then((value) => setState(() {}));
         },
         backgroundColor: FlutterFlowTheme.of(context).primaryColor,
         elevation: 8,

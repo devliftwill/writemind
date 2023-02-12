@@ -72,7 +72,7 @@ class _AudioEditorWidgetState extends State<AudioEditorWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               FlutterFlowDropDown<String>(
-                options: ['en-AU', 'en-IN', 'en-GB', 'en-US'],
+                options: ['en-AU', 'en-GB', 'en-US'],
                 onChanged: (val) =>
                     setState(() => _model.dropDownCountryValue = val),
                 width: double.infinity,

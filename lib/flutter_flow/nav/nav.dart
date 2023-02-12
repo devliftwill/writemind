@@ -294,10 +294,10 @@ class FFRoute {
               : builder(context, ffParams);
           final child = appStateNotifier.loading
               ? Container(
-                  color: Color(0xFFD0D7C7),
+                  color: Colors.transparent,
                   child: Image.asset(
-                    'assets/images/grid_0.webp',
-                    fit: BoxFit.contain,
+                    'assets/images/Screenshot_at_Feb_12_11-28-26.png',
+                    fit: BoxFit.cover,
                   ),
                 )
               : page;

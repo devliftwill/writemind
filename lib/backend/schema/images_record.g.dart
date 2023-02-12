@@ -54,6 +54,20 @@ class _$ImagesRecordSerializer implements StructuredSerializer<ImagesRecord> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.volume;
+    if (value != null) {
+      result
+        ..add('volume')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.isCover;
+    if (value != null) {
+      result
+        ..add('is_cover')
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(bool)));
+    }
     value = object.ffRef;
     if (value != null) {
       result
@@ -97,6 +111,14 @@ class _$ImagesRecordSerializer implements StructuredSerializer<ImagesRecord> {
           result.mask = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
           break;
+        case 'volume':
+          result.volume = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double?;
+          break;
+        case 'is_cover':
+          result.isCover = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool?;
+          break;
         case 'Document__Reference__Field':
           result.ffRef = serializers.deserialize(value,
               specifiedType: const FullType(DocumentReference, const [
@@ -122,6 +144,10 @@ class _$ImagesRecord extends ImagesRecord {
   @override
   final String? mask;
   @override
+  final double? volume;
+  @override
+  final bool? isCover;
+  @override
   final DocumentReference<Object?>? ffRef;
 
   factory _$ImagesRecord([void Function(ImagesRecordBuilder)? updates]) =>
@@ -133,6 +159,8 @@ class _$ImagesRecord extends ImagesRecord {
       this.createdDate,
       this.seconds,
       this.mask,
+      this.volume,
+      this.isCover,
       this.ffRef})
       : super._();
 
@@ -152,6 +180,8 @@ class _$ImagesRecord extends ImagesRecord {
         createdDate == other.createdDate &&
         seconds == other.seconds &&
         mask == other.mask &&
+        volume == other.volume &&
+        isCover == other.isCover &&
         ffRef == other.ffRef;
   }
 
@@ -160,10 +190,14 @@ class _$ImagesRecord extends ImagesRecord {
     return $jf($jc(
         $jc(
             $jc(
-                $jc($jc($jc(0, imageUrl.hashCode), text.hashCode),
-                    createdDate.hashCode),
-                seconds.hashCode),
-            mask.hashCode),
+                $jc(
+                    $jc(
+                        $jc($jc($jc(0, imageUrl.hashCode), text.hashCode),
+                            createdDate.hashCode),
+                        seconds.hashCode),
+                    mask.hashCode),
+                volume.hashCode),
+            isCover.hashCode),
         ffRef.hashCode));
   }
 
@@ -175,6 +209,8 @@ class _$ImagesRecord extends ImagesRecord {
           ..add('createdDate', createdDate)
           ..add('seconds', seconds)
           ..add('mask', mask)
+          ..add('volume', volume)
+          ..add('isCover', isCover)
           ..add('ffRef', ffRef))
         .toString();
   }
@@ -204,6 +240,14 @@ class ImagesRecordBuilder
   String? get mask => _$this._mask;
   set mask(String? mask) => _$this._mask = mask;
 
+  double? _volume;
+  double? get volume => _$this._volume;
+  set volume(double? volume) => _$this._volume = volume;
+
+  bool? _isCover;
+  bool? get isCover => _$this._isCover;
+  set isCover(bool? isCover) => _$this._isCover = isCover;
+
   DocumentReference<Object?>? _ffRef;
   DocumentReference<Object?>? get ffRef => _$this._ffRef;
   set ffRef(DocumentReference<Object?>? ffRef) => _$this._ffRef = ffRef;
@@ -220,6 +264,8 @@ class ImagesRecordBuilder
       _createdDate = $v.createdDate;
       _seconds = $v.seconds;
       _mask = $v.mask;
+      _volume = $v.volume;
+      _isCover = $v.isCover;
       _ffRef = $v.ffRef;
       _$v = null;
     }
@@ -248,6 +294,8 @@ class ImagesRecordBuilder
             createdDate: createdDate,
             seconds: seconds,
             mask: mask,
+            volume: volume,
+            isCover: isCover,
             ffRef: ffRef);
     replace(_$result);
     return _$result;
