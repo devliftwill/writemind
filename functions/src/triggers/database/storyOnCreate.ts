@@ -14,11 +14,11 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
         ) => {
           try {
             await snapshot.ref.update(
-                {status: "Writeing story...", progress: 0.2}
+                {status: "Writeing content...", progress: 0.2}
             );
 
             const story = snapshot.data();
-            const completionStory = await createCompletion(`Write a story about ${story?.text} and format 
+            const completionStory = await createCompletion(`${story?.text} and format 
             it as google text-to-speech SSML wrapped in a speak element with self closing mark elements at the beginning 
             and after each paragraph. The mark elements should contain an attribute called "name" 
             and the value of the attribute should be the first 5 adjectives and nouns from paragraph below hyphen delimited.`, context.params.docId);
@@ -30,7 +30,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
 
 
             let title = completionTitle.data.choices[0].text?.trim();
-            title = title?.replace(/-/g, " ");
+            title = title?.replace(/"/g, "");
 
             await snapshot.ref.update(
                 {status: "Narrating...", progress: 0.3, title}
