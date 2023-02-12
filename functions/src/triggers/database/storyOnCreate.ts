@@ -1,10 +1,9 @@
 import * as functions from "firebase-functions";
-import {createCompletion, createImage} from "../../utils/openai";
+import {createCompletion} from "../../utils/openai";
 import textToSpeech from "@google-cloud/text-to-speech";
 import fs from "fs";
 import util from "util";
 import {saveToStorage} from "../../utils/file";
-import fetch from "node-fetch";
 
 export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 540}).firestore
     .document("stories/{docId}")
@@ -20,27 +19,30 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
 
             const story = snapshot.data();
             const completionStory = await createCompletion(`Write a story about ${story?.text} and format 
-            it as google text-to-speech SSML wrapped in a speak element with mark elements at the beginning 
-            and after each paragraph. The mark element should contain an attribute called "name" 
-            that describes a photo illustration of the paragraph below.`, context.params.docId);
+            it as google text-to-speech SSML wrapped in a speak element with self closing mark elements at the beginning 
+            and after each paragraph. The mark elements should contain an attribute called "name" 
+            and the value of the attribute should be the first 5 adjectives and nouns from paragraph below hyphen delimited.`, context.params.docId);
             const ssml = completionStory.data.choices[0].text?.trim();
-            console.log(ssml);
+            console.log(JSON.stringify(ssml));
 
 
             const completionTitle = await createCompletion(`Create title for the following story ${story?.text}`, context.params.docId);
 
-            const title = completionTitle.data.choices[0].text?.trim();
+
+            let title = completionTitle.data.choices[0].text?.trim();
+            title = title?.replace(/-/g, " ");
+
             await snapshot.ref.update(
                 {status: "Narrating...", progress: 0.3, title}
             );
 
-            const client = new textToSpeech.TextToSpeechClient();
+            const client = new textToSpeech.v1beta1.TextToSpeechClient();
 
             const request = {
               input: {ssml},
               voice: {languageCode: story?.language_code || "en-US", ssmlGender: story?.ssml_gender.toUpperCase() || "FEMALE"},
               audioConfig: {audioEncoding: "MP3"},
-              timePointType: "SSML_TIMEPOINT_TYPE_SSML_MARK",
+              enableTimePointing: ["SSML_MARK"],
             };
             const outputFile = `${context.params.docId}.mp3`;
             const tempPath = `/tmp/${outputFile}`;
@@ -60,43 +62,32 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
 
             console.log("response.timepoints", JSON.stringify(response?.timepoints));
 
+            let index = 0;
             for (const timepoint of response.timepoints) {
-              console.log(`Mark: ${timepoint.markName}, Time: ${timepoint.time}`);
-              const imageRespoonse = await createImage(timepoint.markName);
-              const image = imageRespoonse.data.data[0].url;
-              const file = fs.createWriteStream(tempPath);
+              console.log(`Mark: ${timepoint.markName}, Time: ${timepoint.timeSeconds}`);
 
-              const resp = await fetch(image as string);
-              resp?.body?.pipe(file);
+              let text = timepoint.markName;
+              text = text.replace(/-/g, " ");
 
-
-              await new Promise((resolve, reject) => {
-                // after download completed close filestream
-                file.on("finish", async () => {
-                  file.close();
-                  console.log("Download Completed");
-                  const destinationPath = `stories/${context.params.storyId}/images/` + outputFile;
-                  const url = await saveToStorage(destinationPath, tempPath);
-                  // update with the storage page
-                  imagesRef.add({
-                    image_url: image,
-                    text: timepoint.markName,
-                    created_date: new Date(),
-                    seconds: timepoint.time,
-                  });
-
-                  resolve(url);
-                });
+              await imagesRef.add({
+                // TODO need a better way to define this
+                text,
+                created_date: new Date(),
+                seconds: Math.round(timepoint.timeSeconds),
+                volume: 0.2,
+                is_cover: index === 0,
               });
+              index++;
             }
 
-            // set the cover photo
-            const firstImage = (await imagesRef.limit(1).get()).docs[0].data();
+            // Wait a few seconds for the while the images are saved to the server
+            // TODO fix this
 
-            snapshot.ref.update(
-                {audio, status: "Complete", progress: 1, cover: firstImage.image_url}
-            );
-
+            setTimeout(()=>{
+              snapshot.ref.update(
+                  {audio, status: "Complete", progress: 1}
+              );
+            }, 3000);
 
             return Promise.resolve();
           } catch (err) {

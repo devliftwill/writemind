@@ -20,7 +20,8 @@ export const createImage = async (prompt: string) => {
   return openai.createImage({
     n: 1,
     size: "512x512",
-    prompt,
+    // TODO: we need a better way to stye this
+    prompt: `3D render ${prompt} digital art photo-realistic, concept art, intricate details, highly detailed 8k`,
   });
 };
 
@@ -29,7 +30,7 @@ export const createImageEdit = async (prompt: string, image:File, mask:File) => 
   return openai.createImageEdit(
       image,
       mask,
-      `3D render ${prompt} digital art elegant, highly detailed 8k`,
+      prompt,
       1,
       "512x512",
   );
