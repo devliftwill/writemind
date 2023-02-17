@@ -26,7 +26,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
             console.log(JSON.stringify(ssml));
 
 
-            const completionTitle = await createCompletion(`Create title for the following story ${story?.text}`, context.params.docId);boo
+            const completionTitle = await createCompletion(`Create title for the following story ${story?.text}`, context.params.docId);
 
             let title = completionTitle.data.choices[0].text?.trim();
             title = title?.replace(/"/g, "");
