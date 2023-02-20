@@ -65,7 +65,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
 
 
             // new ai models for speech Testing..
-            const audioResp = await elevenlabsTextToSpeech("This is a test to see if it works", "21m00Tcm4TlvDq8ikWAM");
+            const audioResp = await elevenlabsTextToSpeech(text as string, "21m00Tcm4TlvDq8ikWAM");
             const arrayBuffer = await audioResp.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
             fs.writeFileSync(tempPath, buffer);
