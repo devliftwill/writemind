@@ -1,5 +1,4 @@
 import * as functions from "firebase-functions";
-
 import {createVideoFile} from "../../utils/createVideoFile";
 
 
@@ -11,7 +10,7 @@ export const imageOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
             context: functions.EventContext
         ) => {
           try {
-            await createVideoFile(`${context.params.docId}`);
+            console.log("video url", await createVideoFile(`${context.params.docId}`));
 
 
             // const videoExport = snapshot.data();

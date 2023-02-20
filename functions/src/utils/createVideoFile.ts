@@ -1,13 +1,12 @@
 import * as admin from "firebase-admin";
-import ffmpegCommand from "fluent-ffmpeg";
-// import { promisify } from "util";
+// import {tmpdir} from "os";
+// import {join} from "path";
+import ffmpeg from "fluent-ffmpeg";
+import {promisify} from "util";
+import ffmpegPath from "ffmpeg-static";
+import {saveToStorage} from "./file";
 
-// import fetch from "node-fetch";
-
-/* import * as path from "path";
-import * as os from "os";
-import * as fs from "fs";
- */
+// import fs from "fs";
 
 // const bucket = admin.storage().bucket();
 export async function createVideoFile(storyId: string) {
@@ -15,11 +14,10 @@ export async function createVideoFile(storyId: string) {
   const db = admin.firestore();
   let mp3File = "";
   let mp3back = "";
-  const outputPath = `tmp/stories/${storyId}/video/` + "video.mp4";
   const pics: { path: string; timestamp: number }[] = [];
   const images = (await db.collection(`${basePath}/images`).get()).docs;
 
-  images.forEach(async (doc) => {
+  images.forEach((doc) => {
     if (doc.exists) {
       pics.push({
         path: doc.data().image_url as string,
@@ -27,6 +25,7 @@ export async function createVideoFile(storyId: string) {
       });
     }
   });
+
   const storyRef = db.collection("stories").doc(storyId);
   const storySnapshot = await storyRef.get();
   const story = storySnapshot.data();
@@ -35,7 +34,7 @@ export async function createVideoFile(storyId: string) {
       mp3File = story.audio;
       mp3back = story.background_audio_url;
 
-      await createVideo(mp3File, mp3back, pics, outputPath);
+      await createVideo(mp3File, mp3back, pics);
     }
     return Promise.resolve();
   } catch (err) {
@@ -49,49 +48,68 @@ async function createVideo(
     mp3Path: string,
     bgMp3Path: string,
     images: { path: string; timestamp: number }[],
-    outputFilePath: string
-): Promise<void> {
+): Promise<string> {
+  ffmpeg.setFfmpegPath(ffmpegPath as string);
+  console.log("path 2 ffMpeg static", ffmpegPath);
+  // const bucket = admin.storage().bucket();
   const mp3 = mp3Path; // await downloadFile(mp3Path);
   const bgMp3 = bgMp3Path; // await downloadFile(bgMp3Path);
-
+  const outputPath = "/tmp/video.mp4";
+  /* if (!fs.existsSync("tmp/video")) {
+    fs.mkdirSync("tmp/video", {recursive: true});
+  } */
   const inputs: any[] = [];
 
   images.forEach((image) => {
     const path = image.path;
     const timestamp = image.timestamp;
-    const output = `${timestamp}.png`;
-
+    const outputPicFileName = `${timestamp}.png`;
+    // console.log("url to pictures", image.path);
     inputs.push(
-        `-loop 1 -t 1 -i ${path} -vframes 1 -filter_complex "drawtext=fontfile=Arial.ttf:text='${timestamp}':fontcolor=white:fontsize=20:x=10:y=10" ${output}`
+        `-loop 1 -t 1 -i ${path} -vframes 1 -filter_complex "drawtext=fontfile=Arial.ttf:text='${timestamp}':fontcolor=white:fontsize=20:x=10:y=10" ${outputPicFileName}`
     );
   });
-
-  // const ffmpegCommand = new ffmpeg.FfmpegCommand();
-
-  console.log("first");
-
-
+  const command = ffmpeg();
   inputs.forEach((input) => {
-    ffmpegCommand().input(input);
+    // ffmpegCommand().input(input);
   });
 
-  ffmpegCommand()
-      .inputOptions("-framerate 1")
-      .input(bgMp3)
-      .audioFilter("volume-0.5")
-      .input(mp3)
-      .complexFilter([
-        "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:shortest=1",
-        "amix=inputs=2:duration=longest:dropout_transition=3",
-      ])
-      .output(outputFilePath)
-      .on("end", () => {
-        console.log("Video created successfully");
-      })
+  // ffmpegCommand().inputOptions("-framerate 1");
+  command.input(bgMp3);
+  command.audioFilter("volume-0.5");
+  command.input(mp3);
+  command.complexFilter([
+    "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:shortest=1",
+    "amix=inputs=2:duration=longest:dropout_transition=3",
+  ]);
+  const tempFilePath = outputPath;
+  command.on("end", () => {
+    console.log("Video created successfully");
+  })
       .on("error", (err: any) => {
         console.error(`Error creating video: ${err.message}`);
-      })
-      .run();
+      });
+
+  // Run the ffmpeg command
+  const runCommand = promisify(command.run).bind(command);
+  await runCommand();
+
+  // Upload the video file to Firebase Storage
+  const fileName = outputPath.split("/").pop() || "video.mp4";
+  const destination = `videos/${fileName}`;
+  const publicUrl = await saveToStorage(destination, tempFilePath);
+  /* const uploadResponse = await bucket.upload(tempFilePath, {
+    destination,
+  });
+  console.log("uploadResponse", uploadResponse);
+  // Get the public URL of the uploaded video file
+  const publicUrl = await storage()
+      .bucket()
+      .file(destination)
+      .getSignedUrl({action: "read", expires: "03-01-2500"})
+      .then((signedUrls) => signedUrls[0]);
+ */
+  return publicUrl as string;
 }
 
 /* async function createVideo(
@@ -168,4 +186,3 @@ async function createVideo(
   });
 }
  */
-

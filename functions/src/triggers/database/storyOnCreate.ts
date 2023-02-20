@@ -107,7 +107,7 @@ export const storyOnCreate = functions
             }, 3000);
 
             // Temp here, remove later
-            await createVideoFile(`${context.params.docId}`);
+            console.log("video url", await createVideoFile(`${context.params.docId}`));
             return Promise.resolve();
           } catch (err) {
             return Promise.reject(err);
