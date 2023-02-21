@@ -29,7 +29,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
             const xmlStory = await createCompletion(`use the following text ${text} and format 
             it as google text-to-speech SSML wrapped in a speak element with self closing mark elements at the beginning 
             and after each paragraph. The mark elements should contain an attribute called "name" 
-            and the value of the attribute should be the first 5 adjectives and nouns from paragraph below hyphen delimited.`, context.params.docId);
+            and the value of the attribute should be the first 5 nouns from paragraph below hyphen delimited.`, context.params.docId);
             const ssml = xmlStory.data.choices[0].text?.trim();
             console.log(JSON.stringify(ssml));
 
@@ -47,7 +47,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
 
             const request = {
               input: {ssml},
-              voice: {languageCode: story?.language_code || "en-US", ssmlGender: story?.ssml_gender.toUpperCase() || "FEMALE"},
+              voice: {languageCode: "en-US", ssmlGender: "FEMALE"},
               audioConfig: {audioEncoding: "MP3"},
               enableTimePointing: ["SSML_MARK"],
             };
@@ -65,7 +65,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
 
 
             // new ai models for speech Testing..
-            const audioResp = await elevenlabsTextToSpeech(text as string, "21m00Tcm4TlvDq8ikWAM");
+            const audioResp = await elevenlabsTextToSpeech(text as string, story?.voice_id || "21m00Tcm4TlvDq8ikWAM");
             const arrayBuffer = await audioResp.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
             fs.writeFileSync(tempPath, buffer);
