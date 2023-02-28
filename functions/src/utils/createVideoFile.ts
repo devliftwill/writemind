@@ -1,21 +1,25 @@
-import * as admin from "firebase-admin";
 // import {tmpdir} from "os";
 // import {join} from "path";
-import ffmpeg from "fluent-ffmpeg";
-import {promisify} from "util";
-import ffmpegPath from "ffmpeg-static";
-import {saveToStorage} from "./file";
+// import ffmpeg from 'fluent-ffmpeg';
+// import { promisify } from 'util';
+// import ffmpegPath from 'ffmpeg-static';
+// import { saveToStorage } from './file';
+
+// import { Movie, Scene } from 'json2video-sdk';
+
+// eslint-disable-next-line no-console
+const {Movie, Scene} = require("json2video-sdk");
 
 // import fs from "fs";
 
 // const bucket = admin.storage().bucket();
-export async function createVideoFile(storyId: string) {
-  const basePath = `stories/${storyId}`;
-  const db = admin.firestore();
+export async function createVideoFile(
+    storyRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>
+) {
   let mp3File = "";
   let mp3back = "";
   const pics: { path: string; timestamp: number }[] = [];
-  const images = (await db.collection(`${basePath}/images`).get()).docs;
+  const images = (await storyRef.collection("images").get()).docs;
 
   images.forEach((doc) => {
     if (doc.exists) {
@@ -26,7 +30,6 @@ export async function createVideoFile(storyId: string) {
     }
   });
 
-  const storyRef = db.collection("stories").doc(storyId);
   const storySnapshot = await storyRef.get();
   const story = storySnapshot.data();
   try {
@@ -42,9 +45,72 @@ export async function createVideoFile(storyId: string) {
   }
 }
 
-// ---------- Create Video ----------------------
+export async function createVideo(
+    mp3Path: string,
+    bgMp3Path: string,
+    images: { path: string; timestamp: number }[]
+): Promise<string> {
+  const movie = new Movie();
+  movie.setAPIKey("UiwQfPpVV73YE98RZVE4N5fBoG7TGOHuaKhCwnca");
+  movie.set("resolution", "full-hd");
+  movie.set("quality", "high");
+  movie.set("draft", false);
 
-async function createVideo(
+  console.log("mp3Path", mp3Path);
+  console.log("bgMp3Path", bgMp3Path);
+  // Create SCENE 1
+  const scene1 = new Scene();
+
+  // scene1.set("background-color", "#000000");
+  scene1.addElement({
+    type: "voice",
+    src: mp3Path,
+    muted: false,
+    volume: 9,
+    text: "",
+  });
+
+  scene1.addElement({
+    type: "audio",
+    src: bgMp3Path,
+    muted: false,
+    volume: 4,
+    text: "",
+  });
+
+  images.forEach((image) => {
+    scene1.addElement({
+      type: "image",
+      src: image.path,
+      start: image.timestamp,
+      text: "",
+    });
+    console.log("images", image.path);
+  });
+
+  // scene1.set("duration", 10);
+  movie.addScene(scene1);
+
+  const render = await movie.render();
+  console.log(render);
+
+  try {
+    const status = await movie.waitToFinish((res: any) => {
+      console.log("Rendering: ", res.movie.status, " / ", res.movie.message);
+    });
+    console.log("Movie is ready: ", status.movie.url);
+    console.log("Remaining final movies: ", status.remaining_quota.movies);
+    console.log("Remaining drafts: ", status.remaining_quota.drafts);
+    return status.movie.url;
+  } catch (err) {
+    console.log("Error: ", err);
+    return "error";
+  }
+}
+// ---------- Create Video ----------------------
+/*
+//ffmpeg
+export async function createVideo(
     mp3Path: string,
     bgMp3Path: string,
     images: { path: string; timestamp: number }[],
@@ -55,9 +121,9 @@ async function createVideo(
   const mp3 = mp3Path; // await downloadFile(mp3Path);
   const bgMp3 = bgMp3Path; // await downloadFile(bgMp3Path);
   const outputPath = "/tmp/video.mp4";
-  /* if (!fs.existsSync("tmp/video")) {
-    fs.mkdirSync("tmp/video", {recursive: true});
-  } */
+  // if (!fs.existsSync("tmp/video")) {
+  //  fs.mkdirSync("tmp/video", {recursive: true});
+  //}
   const inputs: any[] = [];
 
   images.forEach((image) => {
@@ -98,20 +164,10 @@ async function createVideo(
   const fileName = outputPath.split("/").pop() || "video.mp4";
   const destination = `videos/${fileName}`;
   const publicUrl = await saveToStorage(destination, tempFilePath);
-  /* const uploadResponse = await bucket.upload(tempFilePath, {
-    destination,
-  });
-  console.log("uploadResponse", uploadResponse);
-  // Get the public URL of the uploaded video file
-  const publicUrl = await storage()
-      .bucket()
-      .file(destination)
-      .getSignedUrl({action: "read", expires: "03-01-2500"})
-      .then((signedUrls) => signedUrls[0]);
- */
   return publicUrl as string;
 }
 
+ */
 /* async function createVideo(
   mainAudioPath: string,
   backgroundAudioPath: string,

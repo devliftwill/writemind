@@ -23,6 +23,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "got": "^11.8.0",
     "https": "^1.0.0",
+    "json2video-sdk": "^2.0.0",
     "node-fetch": "^2.6.1",
     "openai": "^3.1.0",
     "unfetch": "^5.0.0"

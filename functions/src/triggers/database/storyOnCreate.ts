@@ -5,7 +5,6 @@ import fs from "fs";
 // import util from "util";
 import {saveToStorage} from "../../utils/file";
 import {elevenlabsTextToSpeech} from "../../utils/elevenlabs";
-import { createVideoFile } from "../../utils/createVideoFile";
 
 export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 540}).firestore
     .document("stories/{docId}")
@@ -108,9 +107,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
                   {audio, status: "Complete", progress: 1}
               );
             }, 3000);
-             
-            console.log("video url", await createVideoFile(`${context.params.docId}`));
-            
+
             return Promise.resolve();
           } catch (err) {
             return Promise.reject(err);
