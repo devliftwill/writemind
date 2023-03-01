@@ -22,7 +22,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
 
 
             const textStory = await createCompletion(`write a 4 pharagraph story about ${story?.text}`, context.params.docId);
-            const text = textStory.data.choices[0].text?.trim();
+            const text = textStory.data.choices[0].message?.content.trim();
             console.log(JSON.stringify(text));
 
 
@@ -30,13 +30,13 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
             it as google text-to-speech SSML wrapped in a speak element with self closing mark elements at the beginning 
             and after each paragraph. The mark elements should contain an attribute called "name" 
             and the value of the attribute should be a DALL·E 2 description of an appropriate image representation for the paragraph below hyphen delimited.`, context.params.docId);
-            const ssml = xmlStory.data.choices[0].text?.trim();
+            const ssml = xmlStory.data.choices[0].message?.content.trim();
             console.log(JSON.stringify(ssml));
 
 
             const completionTitle = await createCompletion(`Create title for the following story ${story?.text}`, context.params.docId);
 
-            let title = completionTitle.data.choices[0].text?.trim();
+            let title = completionTitle.data.choices[0].message?.content.trim();
             title = title?.replace(/'/g, "").replace(/"/g, "");
 
             await snapshot.ref.update(
