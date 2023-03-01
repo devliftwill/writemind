@@ -8,7 +8,7 @@ const openai = new OpenAIApi(configuration);
 
 export const createCompletion = async (prompt: string, user:string) => {
   return openai.createCompletion({
-    model: "text-davinci-003",
+    model: "gpt-3.5-turbo",
     max_tokens: 1000,
     prompt,
     user,

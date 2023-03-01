@@ -29,7 +29,7 @@ export const storyOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 5
             const xmlStory = await createCompletion(`use the following text ${text} and format 
             it as google text-to-speech SSML wrapped in a speak element with self closing mark elements at the beginning 
             and after each paragraph. The mark elements should contain an attribute called "name" 
-            and the value of the attribute should be a description of an appropriate image representation for the paragraph below hyphen delimited.`, context.params.docId);
+            and the value of the attribute should be a DALL·E 2 description of an appropriate image representation for the paragraph below hyphen delimited.`, context.params.docId);
             const ssml = xmlStory.data.choices[0].text?.trim();
             console.log(JSON.stringify(ssml));
 
