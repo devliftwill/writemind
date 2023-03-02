@@ -8,14 +8,14 @@
 // import { Movie, Scene } from 'json2video-sdk';
 
 // eslint-disable-next-line no-console
-const {Movie, Scene} = require("json2video-sdk");
+const { Movie, Scene } = require("json2video-sdk");
 
 // import fs from "fs";
 
 // const bucket = admin.storage().bucket();
 export async function createVideoFile(
-    storyRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>
-) {
+  storyRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>
+):Promise<string> {
   let mp3File = "";
   let mp3back = "";
   const pics: { path: string; timestamp: number }[] = [];
@@ -36,19 +36,19 @@ export async function createVideoFile(
     if (storySnapshot.exists && story) {
       mp3File = story.audio;
       mp3back = story.background_audio_url;
-
-      await createVideo(mp3File, mp3back, pics);
+      const videoURL = await createVideo(mp3File, mp3back, pics);
+      return Promise.resolve(videoURL);
     }
-    return Promise.resolve();
   } catch (err) {
     return Promise.reject(err);
   }
+  return Promise.reject(new Error("Failed to create video"));
 }
 
 export async function createVideo(
-    mp3Path: string,
-    bgMp3Path: string,
-    images: { path: string; timestamp: number }[]
+  mp3Path: string,
+  bgMp3Path: string,
+  images: { path: string; timestamp: number }[]
 ): Promise<string> {
   const movie = new Movie();
   movie.setAPIKey("UiwQfPpVV73YE98RZVE4N5fBoG7TGOHuaKhCwnca");
@@ -59,30 +59,34 @@ export async function createVideo(
   console.log("bgMp3Path", bgMp3Path);
   // Create SCENE 1
   const scene1 = new Scene();
+  const duration = 60;
 
   scene1.addElement({
-    type: "voice",
+    type: "audio",
     src: mp3Path,
     muted: false,
-    volume: 9,
-    text: "",
+    volume: 5,
+    "z-index": 3,
+    duration: duration,
   });
 
   scene1.addElement({
     type: "audio",
     src: bgMp3Path,
     muted: false,
-    volume: 4,
-    text: "",
+    volume: 1,
+    "z-index": 0,
+    duration: duration,
   });
 
   images.forEach((image) => {
-    scene1.addElement({
-      type: "image",
-      src: image.path,
-      start: image.timestamp,
-      text: "",
-    });
+   if (image.timestamp < 60) {
+      scene1.addElement({
+        type: "image",
+        src: image.path,
+        start: image.timestamp,
+      });
+   }
     console.log("images", image.path);
   });
 
