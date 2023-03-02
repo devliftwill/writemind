@@ -55,13 +55,11 @@ export async function createVideo(
   movie.set("resolution", "full-hd");
   movie.set("quality", "high");
   movie.set("draft", false);
-
   console.log("mp3Path", mp3Path);
   console.log("bgMp3Path", bgMp3Path);
   // Create SCENE 1
   const scene1 = new Scene();
 
-  // scene1.set("background-color", "#000000");
   scene1.addElement({
     type: "voice",
     src: mp3Path,
@@ -88,19 +86,16 @@ export async function createVideo(
     console.log("images", image.path);
   });
 
-  // scene1.set("duration", 10);
   movie.addScene(scene1);
 
   const render = await movie.render();
-  console.log(render);
+  console.log("movie.render", render);
 
   try {
     const status = await movie.waitToFinish((res: any) => {
       console.log("Rendering: ", res.movie.status, " / ", res.movie.message);
     });
     console.log("Movie is ready: ", status.movie.url);
-    console.log("Remaining final movies: ", status.remaining_quota.movies);
-    console.log("Remaining drafts: ", status.remaining_quota.drafts);
     return status.movie.url;
   } catch (err) {
     console.log("Error: ", err);
