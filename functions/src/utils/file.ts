@@ -44,6 +44,48 @@ export const saveToStorage = async (path: string, tempPath: string) => {
   });
 };
 
+// ------------------------------------------
+// Save Buffer to Storage File --------------
+// ------------------------------------------
+export const saveBufferToStorage = async (path: string, buffer: Buffer) => {
+  const storagePath = "gs://writemind-cd567.appspot.com";
+  const storageRef = admin.storage().bucket(storagePath);
+  const file = storageRef.file(path);
+
+  return new Promise<string>((resolve, reject) => {
+    file.save(buffer, function (err) {
+      if (err) {
+        console.log("Unable to save file:", err);
+        reject(err);
+      } else {
+        console.log("File saved successfully!");
+        file.makePublic(function (err) {
+          if (err) {
+            console.log("Unable to make file public:", err);
+            reject(err);
+          } else {
+            console.log("File made public successfully!");
+            file.getSignedUrl({
+              action: "read",
+              expires: "03-09-2500",
+            },
+            function (err, url) {
+              if (err) {
+                console.log("Unable to get signed URL:", err);
+                reject(err);
+              } else {
+                console.log("Signed URL:", url);
+                resolve(url as string);
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+};
+// -------------------------------------------
+
 export const convertToFile = async (
   url: string,
   localPath: string

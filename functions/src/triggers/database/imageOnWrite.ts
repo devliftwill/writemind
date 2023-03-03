@@ -2,9 +2,20 @@ import * as functions from "firebase-functions";
 import {createImage} from "../../utils/openai";
 import fs from "fs";
 import fetch from "node-fetch";
-import {saveToStorage} from "../../utils/file";
+import {saveBufferToStorage} from "../../utils/file";
 import {Change} from "firebase-functions";
 import {DocumentSnapshot} from "firebase-functions/v1/firestore";
+import sharp from "sharp";
+import axios from "axios";
+
+async function downloadAndResizeImage(imageUrl: string) {
+  const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+  const buffer = Buffer.from(response.data, "binary");
+  const resizedBuffer = await sharp(buffer)
+    .resize(1080, 1080)
+    .toBuffer();
+  return resizedBuffer;
+}
 
 
 export const imageOnWrite = functions.runWith({memory: "8GB", timeoutSeconds: 540}).firestore
@@ -43,8 +54,17 @@ export const imageOnWrite = functions.runWith({memory: "8GB", timeoutSeconds: 54
                 file.on("finish", async () => {
                   file.close();
                   console.log("Download Completed");
+
+                  // -- added to make sure there full screen in video export
+                  const resizedBuffer = await downloadAndResizeImage(image as string); // Resize the downloaded image
                   const destinationPath = `stories/${context.params.storyId}/images/` + outputFile;
-                  const url = await saveToStorage(destinationPath, tempPath);
+                  const url = await saveBufferToStorage(destinationPath, resizedBuffer); // Save the resized image to storage
+                  // --------------------------------------------------------
+                
+                  // const destinationPath = `stories/${context.params.storyId}/images/` + outputFile;
+                  // const url = await saveToStorage(destinationPath, tempPath);
+
+                  
                   // update with the storage page
                   await after.ref.update({"image_url": url});
 

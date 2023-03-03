@@ -52,11 +52,11 @@ export async function createVideo(
 ): Promise<string> {
   const movie = new Movie();
   movie.setAPIKey("UiwQfPpVV73YE98RZVE4N5fBoG7TGOHuaKhCwnca");
-  movie.set("resolution", "twitter-portrait");
+  movie.set("resolution", "squared");
   movie.set("quality", "high");
   movie.set("draft", false);
-  movie.set("height", 512);
-  movie.set("width", 512);
+  // movie.set("height", 512);
+  // movie.set("width", 512);
   console.log("mp3Path", mp3Path);
   console.log("bgMp3Path", bgMp3Path);
   // Create SCENE 1
@@ -87,6 +87,7 @@ export async function createVideo(
 
   images.forEach((image) => {
     if (image.timestamp < 60) {
+      // TODO add transition effects
       // const tmpScene = new Scene();
       /* tmpScene.set("transition", {
         style: "wipeup",
