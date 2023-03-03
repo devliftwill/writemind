@@ -15,7 +15,7 @@ const { Movie, Scene } = require("json2video-sdk");
 // const bucket = admin.storage().bucket();
 export async function createVideoFile(
   storyRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>
-):Promise<string> {
+): Promise<string> {
   let mp3File = "";
   let mp3back = "";
   const pics: { path: string; timestamp: number }[] = [];
@@ -52,21 +52,25 @@ export async function createVideo(
 ): Promise<string> {
   const movie = new Movie();
   movie.setAPIKey("UiwQfPpVV73YE98RZVE4N5fBoG7TGOHuaKhCwnca");
-  movie.set("resolution", "full-hd");
+  movie.set("resolution", "twitter-portrait");
   movie.set("quality", "high");
   movie.set("draft", false);
+  movie.set("height", 512);
+  movie.set("width", 512);
   console.log("mp3Path", mp3Path);
   console.log("bgMp3Path", bgMp3Path);
   // Create SCENE 1
   const scene1 = new Scene();
+  scene1.set("background-color", "#4392F1");
   const duration = 60;
 
   scene1.addElement({
     type: "audio",
     src: mp3Path,
     muted: false,
-    volume: 5,
-    "z-index": 3,
+    volume: 1.3,
+    // "z-index": 3,
+    start: 1.5,
     duration: duration,
   });
 
@@ -74,23 +78,33 @@ export async function createVideo(
     type: "audio",
     src: bgMp3Path,
     muted: false,
-    volume: 1,
-    "z-index": 0,
+    volume: 0.2,
+    // "z-index": 0,
     duration: duration,
   });
+  
+  // movie.addScene(scene1);
 
   images.forEach((image) => {
-   if (image.timestamp < 60) {
-      scene1.addElement({
+    if (image.timestamp < 60) {
+      // const tmpScene = new Scene();
+      /* tmpScene.set("transition", {
+        style: "wipeup",
+        duration: 1.5,
+      }); */
+     // tmpScene.addElement({
+      scene1.addElement({ 
         type: "image",
         src: image.path,
         start: image.timestamp,
       });
-   }
+      // movie.addScene(tmpScene);    
+    }
     console.log("images", image.path);
   });
 
   movie.addScene(scene1);
+  // movie.addScene(scene2);
 
   const render = await movie.render();
   console.log("movie.render", render);
