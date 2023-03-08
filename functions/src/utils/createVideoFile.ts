@@ -63,8 +63,37 @@ export async function createVideo(
   const scene1 = new Scene();
   scene1.set("background-color", "#4392F1");
   const duration = 60;
+  
+  // movie.addScene(scene1);
+  let imgDuration = 0;
+  images.forEach((image) => {
+    if (image.timestamp < 60) {
+      // TODO add transition effects
+      const tmpScene = new Scene();
+      imgDuration = 10;
+      tmpScene.setTransition("fade", 1.5);
+      // scene1.addElement({
+      tmpScene.addElement({ 
+        type: "image",
+        src: image.path,
+        // start: image.timestamp,
+        duration: imgDuration,
+      });
+      movie.addScene(tmpScene);    
+    }
+    console.log("images", image.path);
+  });
 
-  scene1.addElement({
+  movie.addElement({
+    type: "audio",
+    src: bgMp3Path,
+    muted: false,
+    volume: 0.2,
+    // "z-index": 0,
+    duration: duration,
+  });
+
+  movie.addElement({
     type: "audio",
     src: mp3Path,
     muted: false,
@@ -74,37 +103,9 @@ export async function createVideo(
     duration: duration,
   });
 
-  scene1.addElement({
-    type: "audio",
-    src: bgMp3Path,
-    muted: false,
-    volume: 0.2,
-    // "z-index": 0,
-    duration: duration,
-  });
+  
   
   // movie.addScene(scene1);
-
-  images.forEach((image) => {
-    if (image.timestamp < 60) {
-      // TODO add transition effects
-      // const tmpScene = new Scene();
-      /* tmpScene.set("transition", {
-        style: "wipeup",
-        duration: 1.5,
-      }); */
-     // tmpScene.addElement({
-      scene1.addElement({ 
-        type: "image",
-        src: image.path,
-        start: image.timestamp,
-      });
-      // movie.addScene(tmpScene);    
-    }
-    console.log("images", image.path);
-  });
-
-  movie.addScene(scene1);
   // movie.addScene(scene2);
 
   const render = await movie.render();
