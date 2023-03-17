@@ -13,8 +13,13 @@ export const videoExportOnCreate = functions.runWith({memory: "8GB", timeoutSeco
             const videoExport = snapshot.data();
             const videoURL = await createVideoFile(videoExport?.story_ref);
             await snapshot.ref.update({status: "Complete", videoURL: videoURL});
-            console.log("video url", videoURL);
-            // const videoExport = snapshot.data();
+            // console.log("first", videoExport?.story_ref)
+            const storySnapshot = await videoExport?.story_ref.get();
+            // const story = storySnapshot.data();
+           
+            storySnapshot.ref.update({
+              video_url: videoURL,
+            });
             return Promise.resolve();
           } catch (err) {
             return Promise.reject(err);

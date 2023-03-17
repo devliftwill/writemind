@@ -30,10 +30,9 @@ export const storyOnCreate = functions
         console.log(JSON.stringify(text));
 
         const xmlStory = await createCompletion(
-          `use the following text ${text} and format 
-            it as google text-to-speech SSML wrapped in a speak element with self closing mark elements at the beginning 
-            and after each paragraph. The mark elements should contain an attribute called "name" 
-            and the value of the attribute should be a DALL·E 2 description of an appropriate image representation for the paragraph below hyphen delimited.`,
+          `use the following text ${text} and format elements at the beginning 
+            and after each paragraph.  the tag should look like this - '<mark name="description-goes-here" />'. The mark elements should contain an attribute called "name" 
+            and the value of the attribute should be a DALL·E 2 description of an appropriate image representation for the paragraph below hyphen delimited. wrap all with '<speak>' tag`,
           context.params.docId
         );
         const ssml = xmlStory.data.choices[0].message?.content.trim();

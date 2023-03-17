@@ -65,22 +65,24 @@ export async function createVideo(
   const duration = 60;
   
   // movie.addScene(scene1);
-  let imgDuration = 0;
-  images.forEach((image) => {
-    if (image.timestamp < 60) {
+  // let imgDuration = 0;
+  const imagesTimes = getTimeDiffs(images);
+  imagesTimes.forEach((image) => {
+    // if (image.timestamp < 60) {
       // TODO add transition effects
       const tmpScene = new Scene();
-      imgDuration = 10;
+      console.log("first", image.timestamp)
+      // imgDuration = 10;
       tmpScene.setTransition("fade", 1.5);
       // scene1.addElement({
       tmpScene.addElement({ 
         type: "image",
         src: image.path,
         // start: image.timestamp,
-        duration: imgDuration,
+        duration: image.timestamp,
       });
       movie.addScene(tmpScene);    
-    }
+    // }
     console.log("images", image.path);
   });
 
@@ -122,7 +124,20 @@ export async function createVideo(
     return "error";
   }
 }
-// ---------- Create Video ----------------------
+
+
+function getTimeDiffs(images: { path: string; timestamp: number }[]) {
+  const timeDiffs = [];
+  
+  images.sort((a, b) => a.timestamp - b.timestamp);
+
+  for (let i = 1; i < images.length; i++) {
+    const diff = images[i].timestamp - images[i-1].timestamp;
+    timeDiffs.push({ path: images[i].path, timestamp: diff });
+  }
+
+  return timeDiffs;
+}// ---------- Create Video ----------------------
 /*
 //ffmpeg
 export async function createVideo(
