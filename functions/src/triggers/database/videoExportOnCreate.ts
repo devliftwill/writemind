@@ -1,7 +1,6 @@
 import * as functions from "firebase-functions";
 import {createVideoFile} from "../../utils/createVideoFile";
 
-
 export const videoExportOnCreate = functions.runWith({memory: "8GB", timeoutSeconds: 540}).firestore
     .document("video_exports/{docId}")
     .onCreate(
